@@ -1,11 +1,11 @@
 {
-  "name": "eva-skeleton",
+  "name": "avnpc",
   "version": "0.0.0-development",
-  "description": "A skeleton project based on EvaEngine.js",
+  "description": "API of avnpc.com based on EvaEngine.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/EvaEngine/EvaSkeleton.js.git"
+    "url": "https://github.com/AlloVince/avnpc.js.git"
   },
   "scripts": {
     "ava": "LOG_LEVEL=error NODE_ENV=test node ./node_modules/.bin/ava --verbose --serial",
