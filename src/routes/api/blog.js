@@ -31,6 +31,7 @@ const router = EvaEngine.createRouter();
            - -created_at
      responses:
        200:
+         description: success response
          schema:
            type: object
            required:
@@ -90,6 +91,7 @@ router.get('/posts', wrapper(async(req, res) => {
          description: Post slug
      responses:
        200:
+         description: success response
          schema:
            type: object
            $ref: '#/definitions/BlogPosts'
@@ -100,7 +102,7 @@ router.get('/posts/:slug', wrapper(async(req, res) => {
   const { slug } = req.params;
   const post = await blogModel.get(slug);
   if (!post) {
-    throw new exceptions.ResourceNotFoundException('Repayment not exists');
+    throw new exceptions.ResourceNotFoundException('Blog post not exists');
   }
   return res.json(post);
 }));

@@ -39,6 +39,7 @@ const auth = DI.get('auth')();
            - -created_at
      responses:
        200:
+         description: success response
          schema:
            type: object
            required:
@@ -94,11 +95,13 @@ router.get('/posts', wrapper(async (req, res) => {
        - Manage_Blog
      parameters:
        - name: id
+         type: int
          in: path
          description: Post ID
          required: true
      responses:
        200:
+         description: success response
          schema:
            type: object
            $ref: '#/definitions/BlogPosts'
@@ -130,6 +133,7 @@ router.get('/posts/:id', auth, wrapper(async (req, res) => {
            $ref: '#/definitions/BlogPosts'
      responses:
        200:
+         description: success response
          schema:
            type: object
            $ref: '#/definitions/BlogPosts'
@@ -158,6 +162,7 @@ router.post('/posts', auth, validator(v => ({
        - Manage_Blog
      parameters:
        - name: id
+         type: int
          in: path
          description: Post ID
          required: true
@@ -169,6 +174,7 @@ router.post('/posts', auth, validator(v => ({
            $ref: '#/definitions/BlogPosts'
      responses:
        200:
+         description: success response
          schema:
            type: object
            $ref: '#/definitions/BlogPosts'
@@ -197,11 +203,13 @@ router.put('/posts/:id', auth, validator(v => ({
        - Manage_Blog
      parameters:
        - name: id
+         type: int
          in: path
          description: Post ID
          required: true
      responses:
        200:
+         description: success response
          schema:
            type: object
            $ref: '#/definitions/BlogPosts'

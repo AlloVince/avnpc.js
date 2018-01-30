@@ -7,10 +7,6 @@ notifications:
 node_js:
   - '9'
   - '8'
-script:
-- npm run build
-- npm run lint
-- npm test
 after_success:
   - npm run travis-deploy-once "npm run semantic-release"
 branches:
