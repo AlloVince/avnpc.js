@@ -1,24 +1,21 @@
+sudo: false
 language: node_js
 cache:
   directories:
     - ~/.npm
 notifications:
   email: false
-node_js:
-  - '9'
-  - '8'
-script:
-  - echo "Skip default tests"
 
 jobs:
   include:
-    - stage: unit test
+    - stage: test
+      node_js: '8'
       if: tag IS blank
       script:
         - npm run lint
         - npm run ava
     - stage: semantic release
-      node_js: '9'
+      node_js: '8'
       if: tag IS blank AND branch IS master
       script:
         - npm run travis-deploy-once "npm run semantic-release"
