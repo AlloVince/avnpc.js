@@ -19,9 +19,6 @@ jobs:
       if: tag IS blank
       script:
         - npm run travis-deploy-once "npm run semantic-release"
-      branches:
-        only:
-          master
     - stage: docker release
       node_js: '8'
       if: tag IS present
