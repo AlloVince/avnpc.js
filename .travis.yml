@@ -10,10 +10,10 @@ node_js:
   - '9'
   - '8'
 script:
-- npm run lint
-- npm run ava
+- if [[ "${TRAVIS_TAG}" == "" ]]; then npm run lint; fi
+- if [[ "${TRAVIS_TAG}" == "" ]]; then npm run ava; fi
 after_success:
-  - if [[ "${TRAVIS_BRANCH}" == "master"  ]] && [[ "${TRAVIS_TAG}" == "" ]];  npm run travis-deploy-once "npm run semantic-release"; fi
+  - if [[ "${TRAVIS_BRANCH}" == "master"  ]] && [[ "${TRAVIS_TAG}" == "" ]]; then npm run travis-deploy-once "npm run semantic-release"; fi
 jobs:
   include:
     - stage: docker release
