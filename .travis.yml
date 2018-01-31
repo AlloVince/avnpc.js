@@ -24,7 +24,7 @@ jobs:
       if: tag IS present
       script:
         - docker build -t allovince/avnpc .
-        - docker tag allovince/avnpc:latest $TRAVIS_TAG
+        - docker tag allovince/avnpc allovince/avnpc:$TRAVIS_TAG
         - docker images
         - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         - docker push allovince/avnpc:latest;
