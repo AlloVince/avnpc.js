@@ -7,11 +7,12 @@ notifications:
 node_js:
   - '9'
   - '8'
-script: echo "Skip default tests"
+script:
+  - echo "Skip default tests"
 
 jobs:
   include:
-    - stage: test
+    - stage: unit test
       if: tag IS blank
       script:
         - npm run lint
