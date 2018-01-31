@@ -13,11 +13,7 @@ script:
 - npm run lint
 - npm run ava
 after_success:
-  - npm run travis-deploy-once "npm run semantic-release"
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
-
+  - if [[ "${TRAVIS_BRANCH}" == "master"  ]] && [[ "${TRAVIS_TAG}" == "" ]];  npm run travis-deploy-once "npm run semantic-release"; fi
 jobs:
   include:
     - stage: docker release
