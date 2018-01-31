@@ -4,26 +4,29 @@ cache:
     - ~/.npm
 notifications:
   email: false
+node_js:
+  - '9'
+  - '8'
+script: echo "Skip default tests"
+
 jobs:
   include:
     - stage: test
-      node_js:
-        - '9'
-        - '8'
+      if: tag IS blank
       script:
         - npm run lint
         - npm run ava
-      if: tag IS blank
     - stage: semantic release
       node_js: '9'
+      if: tag IS blank AND branch IS master
       script:
         - npm run travis-deploy-once "npm run semantic-release"
-      if: (tag IS blank) AND (branch IS master)
     - stage: docker release
       node_js: '8'
+      if: tag IS present
       script:
-        - docker run build allovince/avnpc
+        - docker run build -t allovince/avnpc .
+        - docker images
         - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
         - docker push allovince/avnpc:latest;
         - docker push allovince/avnpc:$TRAVIS_TAG;
-      if: tag IS present
