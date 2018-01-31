@@ -16,7 +16,7 @@ jobs:
         - npm run ava
     - stage: semantic release
       node_js: '8'
-      if: tag IS blank
+      if: branch IS master
       script:
         - npm run travis-deploy-once "npm run semantic-release"
     - stage: docker release
