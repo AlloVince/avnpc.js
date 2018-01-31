@@ -19,7 +19,7 @@ jobs:
       if: tag IS blank
       script:
         - npm run travis-deploy-once "npm run semantic-release"
-      branch:
+      branches:
         only:
           master
     - stage: docker release
