@@ -7,8 +7,23 @@ notifications:
 node_js:
   - '9'
   - '8'
-after_success:
-  - npm run travis-deploy-once "npm run semantic-release"
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm run lint
+        - npm run ava
+      if: tag IS blank
+    - stage: semantic release
+      node_js: '8'
+      script:
+        - npm run travis-deploy-once "npm run semantic-release"
+      if: (tag IS blank) AND (branch IS master)
+    - stage: docker release
+      node_js: '8'
+      script:
+        - docker run build allovince/avnpc
+        - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+        - docker push allovince/avnpc:latest;
+        - docker push allovince/avnpc:$TRAVIS_TAG;
+      if: tag IS present

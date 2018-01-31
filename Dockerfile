@@ -5,8 +5,9 @@ RUN apk add --no-cache tzdata && \
 
 COPY . /opt/htdocs/avnpc.js
 WORKDIR /opt/htdocs/avnpc.js
-RUN npm install
-RUN npm run build
-RUN npm prune --production
+
+RUN npm install && npm run build && npm prune --production
+
 EXPOSE 3000
+
 CMD node ./build/app.js
