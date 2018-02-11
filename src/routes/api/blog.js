@@ -89,6 +89,7 @@ router.get('/posts', wrapper(async(req, res) => {
          in: path
          type: string
          description: Post slug
+         required: true
      responses:
        200:
          description: success response

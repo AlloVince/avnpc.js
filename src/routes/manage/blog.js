@@ -95,7 +95,7 @@ router.get('/posts', wrapper(async (req, res) => {
        - Manage_Blog
      parameters:
        - name: id
-         type: int
+         type: number
          in: path
          description: Post ID
          required: true
@@ -162,7 +162,7 @@ router.post('/posts', auth, validator(v => ({
        - Manage_Blog
      parameters:
        - name: id
-         type: int
+         type: number
          in: path
          description: Post ID
          required: true
@@ -203,7 +203,7 @@ router.put('/posts/:id', auth, validator(v => ({
        - Manage_Blog
      parameters:
        - name: id
-         type: int
+         type: number
          in: path
          description: Post ID
          required: true
