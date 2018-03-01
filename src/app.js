@@ -2,7 +2,9 @@ import { EvaEngine, DI, express } from 'evaengine';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import moment from 'moment-timezone';
 
+moment.tz.setDefault('Asia/Shanghai');
 const engine = new EvaEngine({
   projectRoot: `${__dirname}/..`,
   port: process.env.PORT || 3000

@@ -3,13 +3,13 @@ export default DataTypes => ({
     id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       autoIncrement: true,
       comment: 'ID'
     },
     postId: {
       allowNull: false,
-      type: DataTypes.INTEGER(20),
+      type: DataTypes.INTEGER(20).UNSIGNED,
       comment: '文章ID'
     },
     metaKeywords: {

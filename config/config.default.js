@@ -1,4 +1,9 @@
 module.exports = {
+  blog: {
+    repoPrivate: false,
+    repoToken: '',
+    repo: 'AlloVince/avnpc.content'
+  },
   sequelize: {
     logging: true
   },

@@ -1,11 +1,11 @@
 import { EvaEngine, DI } from 'evaengine';
-import * as HelloWorldCommands from './commands/hello_world';
+import * as BlogCommands from './commands/blog';
 
 const engine = new EvaEngine({
   projectRoot: `${__dirname}/..`
 }, 'cli');
 engine.registerCommands([
-  HelloWorldCommands
+  BlogCommands
 ]);
 const logger = DI.get('logger');
 const timeout = process.env.STOP_TIMEOUT || 60;

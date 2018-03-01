@@ -3,7 +3,7 @@ export default DataTypes => ({
     id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       autoIncrement: true,
       comment: 'ID'
     },
@@ -15,25 +15,25 @@ export default DataTypes => ({
     },
     parentId: {
       allowNull: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '父ID'
     },
     rootId: {
       allowNull: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '根ID'
     },
     sortOrder: {
       allowNull: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '排序编号'
     },
     count: {
       allowNull: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '统计'
     }

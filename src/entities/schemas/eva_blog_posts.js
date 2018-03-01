@@ -3,7 +3,7 @@ export default DataTypes => ({
     id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       autoIncrement: true,
       comment: 'ID'
     },
@@ -14,7 +14,7 @@ export default DataTypes => ({
     },
     status: {
       allowNull: false,
-      type: DataTypes.ENUM('deleted', 'draft', 'published', 'pending'),
+      type: DataTypes.ENUM('draft', 'published', 'pending'),
       defaultValue: 'pending',
       comment: '状态'
     },
@@ -37,7 +37,7 @@ export default DataTypes => ({
       comment: '原始代码类型'
     },
     language: {
-      allowNull: true,
+      allowNull: false,
       type: DataTypes.STRING(5),
       defaultValue: 'en',
       comment: '语言'
@@ -51,22 +51,40 @@ export default DataTypes => ({
     slug: {
       allowNull: false,
       type: DataTypes.STRING(100),
+      unique: true,
       comment: '唯一标示'
+    },
+    contentStorage: {
+      allowNull: false,
+      type: DataTypes.ENUM('local', 'remote'),
+      defaultValue: 'local',
+      comment: '正文存储方式[本地|远程]'
+    },
+    contentRemoteUrl: {
+      allowNull: true,
+      type: DataTypes.STRING(255),
+      comment: '正文远程URL'
+    },
+    contentSynchronizedAt: {
+      allowNull: false,
+      type: DataTypes.INTEGER(10).UNSIGNED,
+      defaultValue: '0',
+      comment: '正文上次同步时间'
     },
     sortOrder: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '排序'
     },
     createdAt: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       comment: '创建时间'
     },
     userId: {
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.BIGINT.UNSIGNED,
       defaultValue: '0',
       comment: '创建用户ID'
     },
@@ -83,7 +101,7 @@ export default DataTypes => ({
     },
     editorId: {
       allowNull: true,
-      type: DataTypes.BIGINT,
+      type: DataTypes.BIGINT.UNSIGNED,
       defaultValue: '0',
       comment: '更新用户ID'
     },
@@ -106,7 +124,7 @@ export default DataTypes => ({
     },
     commentCount: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '评论数量'
     },
@@ -118,7 +136,7 @@ export default DataTypes => ({
     },
     imageId: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '封面ID'
     },
@@ -144,7 +162,7 @@ export default DataTypes => ({
     },
     deletedAt: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       defaultValue: '0',
       comment: '删除时间'
     }
@@ -153,6 +171,11 @@ export default DataTypes => ({
     tableName: 'eva_blog_posts',
     freezeTableName: true,
     indexes: [
+      {
+        name: 'slug',
+        unique: true,
+        fields: ['slug']
+      },
       {
         name: 'createdAt',
         fields: ['createdAt']

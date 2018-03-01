@@ -3,18 +3,18 @@ export default DataTypes => ({
     id: {
       allowNull: false,
       primaryKey: true,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       autoIncrement: true,
       comment: 'ID'
     },
     tagId: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       comment: 'TAG ID'
     },
     postId: {
       allowNull: false,
-      type: DataTypes.INTEGER(10),
+      type: DataTypes.INTEGER(10).UNSIGNED,
       comment: 'POST ID'
     }
   },

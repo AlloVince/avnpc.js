@@ -1,10 +1,70 @@
-import { exceptions, utils } from 'evaengine';
+import { DI, exceptions, utils } from 'evaengine';
+import assert from 'assert';
+import moment from 'moment-timezone';
 import entities from '../entities';
 
 export default class BlogPost {
+  async syncContent(id) {
+    const [post, text] = await Promise.all([
+      entities.get('BlogPosts').findOne({ where: { id } }),
+      entities.get('BlogTexts').findOne({ where: { postId: id } })
+    ]);
+    assert(post && text, 'Blog post or text not exists');
+
+    const content = await this.getContentFromGithub(post);
+    const transaction = await entities.getTransaction();
+    try {
+      post.contentSynchronizedAt = DI.get('now').getTimestamp();
+      text.content = content;
+      await post.save();
+      await text.save();
+      await transaction.commit();
+    } catch (e) {
+      await transaction.rollback();
+      throw new exceptions.DatabaseIOException(e);
+    }
+    return post;
+  }
+
+  async getContentFromGithub(post) {
+    const config = DI.get('config');
+    const year = moment.unix(post.createdAt).format('YYYY');
+    return DI.get('http_client').request({
+      url: `https://raw.githubusercontent.com/${config.get('blog.repo')}/master/${year}/${post.slug}.md`
+    });
+  }
+
+  async getPrev(post) {
+    return entities.get('BlogPosts').findOne({
+      where: {
+        id: {
+          $ne: post.id
+        },
+        createdAt: {
+          $lte: post.createdAt
+        }
+      },
+      order: [['createdAt', 'DESC'], ['id', 'DESC']]
+    });
+  }
+
+  async getNext(post) {
+    return entities.get('BlogPosts').findOne({
+      where: {
+        id: {
+          $ne: post.id
+        },
+        createdAt: {
+          $gte: post.createdAt
+        }
+      },
+      order: [['createdAt', 'ASC'], ['id', 'ASC']]
+    });
+  }
+
   async get(idOrslug, deletedAt = 0) {
     const where = /^\d+$/.test(idOrslug) ? { id: idOrslug } : { slug: idOrslug };
-    return entities.get('BlogPosts').findOne({
+    const post = await entities.get('BlogPosts').findOne({
       where: Object.assign(where, {
         deletedAt
       }),
@@ -16,6 +76,18 @@ export default class BlogPost {
         as: 'tags'
       }],
       order: [['createdAt', 'DESC'], ['id', 'DESC']]
+    });
+    if (!post) {
+      throw new exceptions.ResourceNotFoundException('Blog post not exists');
+    }
+    const [prev, next] = await Promise.all([
+      this.getPrev(post),
+      this.getNext(post)
+    ]);
+    return Object.assign(post.get(), {
+      prev,
+      next,
+      // repo: await this.getContentFromRepo(post)
     });
   }
 
