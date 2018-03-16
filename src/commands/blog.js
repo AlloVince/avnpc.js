@@ -6,11 +6,11 @@ import entities from '../entities';
 
 export class BlogSync extends Command {
   static getName() {
-    return 'blog:sync';
+    return 'blog:sync:hexo';
   }
 
   static getDescription() {
-    return 'Sync remote repo content to blog post';
+    return 'Sync remote hexo repo content to blog post';
   }
 
   static getSpec() {
@@ -38,7 +38,7 @@ export class BlogSync extends Command {
     let failed = 0;
     for (const post of posts) {
       try {
-        await blogModel.syncContent(post.id);
+        await blogModel.syncHexo(post.id);
         success += 1;
         logger.info('Sync blog post No.%s success', post.id);
       } catch (e) {

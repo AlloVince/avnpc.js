@@ -28,33 +28,45 @@ ${post.text.content}
     };
   }
 
-  async syncContent(id) {
+  async syncHexo(id) {
     const [post, text] = await Promise.all([
       entities.get('BlogPosts').findOne({ where: { id } }),
       entities.get('BlogTexts').findOne({ where: { postId: id } })
     ]);
     assert(post && text, 'Blog post or text not exists');
 
-    const content = await this.getContentFromGithub(post);
-    const transaction = await entities.getTransaction();
-    try {
-      post.contentSynchronizedAt = DI.get('now').getTimestamp();
-      text.content = content;
-      await post.save();
-      await text.save();
-      await transaction.commit();
-    } catch (e) {
-      await transaction.rollback();
-      throw new exceptions.DatabaseIOException(e);
+    const rawText = await this.getContentFromGithub(post);
+    const { frontMatter: { title, date, tags }, content }
+      = this.constructor.hexoParser(rawText, post.id);
+    return this.update(id, {
+      title,
+      createdAt: moment(date).unix(),
+      tags: tags.map(tagName => ({ tagName })),
+      contentSynchronizedAt: DI.get('now').getTimestamp(),
+      text: {
+        content
+      }
+    }, 0);
+  }
+
+  static hexoParser(rawText, filename) {
+    const splitMark = '---\n';
+    if (!rawText.startsWith(splitMark)) {
+      throw new SyntaxError(`Unrecognizable hexo file ${filename}`);
     }
-    return post;
+
+    const [, frontMatter, ...contents] = rawText.split(splitMark);
+    return {
+      frontMatter: yaml.load(frontMatter),
+      content: contents.join(splitMark).trimLeft()
+    };
   }
 
   async getContentFromGithub(post) {
     const config = DI.get('config');
     const year = moment.unix(post.createdAt).format('YYYY');
     return DI.get('http_client').request({
-      url: `https://raw.githubusercontent.com/${config.get('blog.repo')}/master/${year}/${post.slug}.md`
+      url: `https://raw.githubusercontent.com/${config.get('blog.repo')}/master/source/_posts/${year}/${post.slug}.md`
     });
   }
 
@@ -104,6 +116,11 @@ ${post.text.content}
     if (!post) {
       throw new exceptions.ResourceNotFoundException('Blog post not exists');
     }
+    return post;
+  }
+
+  async getWithNeibor(idOrslug, deletedAt = 0) {
+    const post = await this.get(idOrslug, deletedAt);
     const [prev, next] = await Promise.all([
       this.getPrev(post),
       this.getNext(post)
@@ -155,9 +172,8 @@ ${post.text.content}
   async update(id, input, userId) {
     const entity = entities.get('BlogPosts');
     const post = await this.get(id);
-
     if (!post) {
-      throw new exceptions.ResourceNotFoundException('Post not found');
+      throw new exceptions.ResourceNotFoundException(`Post ${id} not found`);
     }
 
     let { tags = [] } = input;
@@ -168,10 +184,10 @@ ${post.text.content}
     });
 
 
-    const errors = await entity.build(input).validate();
-    if (errors) {
-      throw new exceptions.ModelInvalidateException(errors);
-    }
+    // const errors = await entity.build(input).validate();
+    // if (errors) {
+    //   throw new exceptions.ModelInvalidateException(errors);
+    // }
     Object.assign(input, { userId });
     const transaction = await entities.getTransaction();
     try {
@@ -186,6 +202,7 @@ ${post.text.content}
       for (const tagPost of input.tagsPosts) {
         await entities.get('BlogTagsPosts').create(tagPost, { transaction });
       }
+
       //NOTE: update relations MUST before update main entity
       await post.text.update(input.text, { transaction });
       await post.update(Object.assign(input, {

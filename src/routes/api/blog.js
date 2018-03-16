@@ -101,7 +101,7 @@ router.get('/posts', wrapper(async(req, res) => {
 router.get('/posts/:slug', wrapper(async(req, res) => {
   const blogModel = new models.BlogPost();
   const { slug } = req.params;
-  const post = await blogModel.get(slug);
+  const post = await blogModel.getWithNeibor(slug);
   if (!post) {
     throw new exceptions.ResourceNotFoundException('Blog post not exists');
   }
