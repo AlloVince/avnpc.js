@@ -1,9 +1,33 @@
 import { DI, exceptions, utils } from 'evaengine';
 import assert from 'assert';
 import moment from 'moment-timezone';
+import yaml from 'js-yaml';
 import entities from '../entities';
 
 export default class BlogPost {
+  async exportToHexo(id) {
+    const post = await this.get(id);
+    const createAt = moment.unix(post.createdAt).format('YYYY-MM-DD HH:mm:ss');
+    const frontMatter = {
+      slug: post.slug,
+      date: createAt,
+      title: post.title,
+      id: post.id,
+      tags: post.tags.map(t => t.tagName)
+    };
+    return {
+      filename: `${post.slug}.md`,
+      year: createAt.split('-')[0],
+      month: createAt.split('-')[1],
+      day: createAt.split('-')[2],
+      content: `---
+${yaml.safeDump(frontMatter)}---
+
+${post.text.content}
+`
+    };
+  }
+
   async syncContent(id) {
     const [post, text] = await Promise.all([
       entities.get('BlogPosts').findOne({ where: { id } }),
