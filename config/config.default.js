@@ -2,7 +2,8 @@ module.exports = {
   blog: {
     repoPrivate: false,
     repoToken: '',
-    repo: 'AlloVince/avnpc.content'
+    repo: 'AlloVince/avnpc.content',
+    hexoSourcePath: '/opt/htdocs/avnpc.content/source/_posts'
   },
   sequelize: {
     logging: true

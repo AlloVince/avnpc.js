@@ -65,6 +65,7 @@ app.use('/v1/graphql', bodyParser.json(), graphqlExpress({
     resolvers: {
       Query: {
         posts: async (group, { offset, limit = 10 }) => {
+          console.log('graphql test');
           return {
             pagination: {
               total: 10
@@ -72,8 +73,8 @@ app.use('/v1/graphql', bodyParser.json(), graphqlExpress({
             results: await entities.get('BlogPosts').findAll({ offset, limit })
           };
         }
-      },
-    },
+      }
+    }
   })
 }));
 // GraphiQL, a visual editor for queries

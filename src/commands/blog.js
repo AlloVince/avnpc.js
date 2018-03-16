@@ -82,7 +82,7 @@ export class BlogExportHexo extends Command {
     const blogModel = new BlogPost();
     let success = 0;
     let failed = 0;
-    const root = '/opt/htdocs/avnpc.content/source/_posts'
+    const root = DI.get('config').get('blog.hexoSourcePath');
     for (const post of posts) {
       try {
         const { filename, content, year } = await blogModel.exportToHexo(post.id);

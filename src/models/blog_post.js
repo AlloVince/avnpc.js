@@ -110,8 +110,7 @@ ${post.text.content}
     ]);
     return Object.assign(post.get(), {
       prev,
-      next,
-      // repo: await this.getContentFromRepo(post)
+      next
     });
   }
 
