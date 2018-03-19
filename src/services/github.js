@@ -26,6 +26,29 @@ export default class GithubAPIClient {
     this.config = config;
   }
 
+  /**
+   * @param path
+   * @returns {Promise<Array{{name:string, type:string, mode:integer}}>}
+   */
+  async getFileTrees(path) {
+    const { repository: { object: { entries = [] } } } = await this.queryGraphQL(`
+    {
+      repository(owner: "${this.config.get('blog.githubOwner')}", name: "${this.config.get('blog.githubRepo')}") {
+        object(expression: "${this.config.get('blog.githubBranch')}:${path}") {
+          ... on Tree {
+            entries {
+              name,
+              type,
+              mode
+            }
+          }
+        }
+      }
+    }
+    `);
+    return entries || [];
+  }
+
   async queryGraphQL(queryText) {
     const { data } = await DI.get('http_client').request({
       method: 'POST',

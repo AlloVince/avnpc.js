@@ -46,14 +46,13 @@ const router = EvaEngine.createRouter();
                  $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/posts', wrapper(async(req, res) => {
+router.get('/posts', wrapper(async (req, res) => {
   const orderScaffold = new utils.apiScaffold.OrderScaffold();
   orderScaffold.setFields([
     'createdAt'
   ], 'createdAt', 'DESC');
 
-  // const { uid } = req.auth;
-  const where = { deletedAt: 0 };
+  const where = { status: 'published', deletedAt: 0 };
   let { order } = req.query;
   order = orderScaffold.getOrderByQuery(order);
 
@@ -98,7 +97,7 @@ router.get('/posts', wrapper(async(req, res) => {
            $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/posts/:slug', wrapper(async(req, res) => {
+router.get('/posts/:slug', wrapper(async (req, res) => {
   const blogModel = new models.BlogPost();
   const { slug } = req.params;
   const post = await blogModel.getWithNeighbor(slug);

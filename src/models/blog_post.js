@@ -1,107 +1,8 @@
-import { DI, exceptions, utils } from 'evaengine';
+import { exceptions, utils } from 'evaengine';
 import assert from 'assert';
-import moment from 'moment-timezone';
-import yaml from 'js-yaml';
 import entities from '../entities';
 
 export default class BlogPost {
-  async exportToHexo(id) {
-    const post = await this.get(id);
-    const createAt = moment.unix(post.createdAt).format('YYYY-MM-DD HH:mm:ss');
-    const frontMatter = {
-      slug: post.slug,
-      date: createAt,
-      title: post.title,
-      id: post.id,
-      tags: post.tags.map(t => t.tagName)
-    };
-    return {
-      filename: `${post.slug}.md`,
-      year: createAt.split('-')[0],
-      month: createAt.split('-')[1],
-      day: createAt.split('-')[2],
-      content: `---
-${yaml.safeDump(frontMatter)}---
-
-${post.text.content}
-`
-    };
-  }
-
-  async syncHexo(id) {
-    const [post, text] = await Promise.all([
-      entities.get('BlogPosts').findOne({ where: { id } }),
-      entities.get('BlogTexts').findOne({ where: { postId: id } })
-    ]);
-    assert(post && text, 'Blog post or text not exists');
-
-    const { rawText, contentRemoteHash } = await this.getPostFromGithub(post);
-    if (contentRemoteHash === post.contentRemoteHash) {
-      DI.get('logger').warn('Post not updated by same hash', contentRemoteHash);
-      return false;
-    }
-
-    const { frontMatter: { title, date, tags }, content }
-      = this.constructor.hexoParser(rawText, post.id);
-    return this.update(id, {
-      title,
-      createdAt: moment(date).unix(),
-      tags: tags.map(tagName => ({ tagName })),
-      contentRemoteHash,
-      contentSynchronizedAt: DI.get('now').getTimestamp(),
-      text: {
-        content
-      }
-    }, 0);
-  }
-
-  /**
-   * @param rawText
-   * @param filename
-   * @returns {{frontMatter: *, content: string}}
-   */
-  static hexoParser(rawText, filename) {
-    const splitMark = '---';
-    if (!rawText.startsWith(splitMark)) {
-      throw new SyntaxError(`Unrecognizable hexo file ${filename}, no front matter found`);
-    }
-    const [, frontMatter, ...contents] = rawText.split(splitMark);
-    if (contents.length < 1) {
-      throw new SyntaxError(`Unrecognizable hexo file ${filename}, no content found`);
-    }
-    return {
-      frontMatter: yaml.load(frontMatter),
-      content: contents.join(splitMark).trim()
-    };
-  }
-
-  async getPostFromGithub(post) {
-    const config = DI.get('config');
-    const year = moment.unix(post.createdAt).format('YYYY');
-    const {
-      repository:
-        {
-          object: { commitUrl, text }
-        }
-    } = await DI.get('github').queryGraphQL(`
-    {
-      repository(owner: "${config.get('blog.githubOwner')}", name: "${config.get('blog.githubRepo')}") {
-        object(expression: "${config.get('blog.githubBranch')}:source/_posts/${year}/${post.slug}.md") {
-          commitUrl
-          ... on Blob {
-            text
-            commitUrl
-          }
-        }
-      }
-    }
-    `);
-    return {
-      contentRemoteHash: commitUrl.split('/').pop(),
-      rawText: text
-    };
-  }
-
   async getPrev(post) {
     return entities.get('BlogPosts').findOne({
       where: {
@@ -130,12 +31,10 @@ ${post.text.content}
     });
   }
 
-  async get(idOrSlug, deletedAt = 0) {
+  async get(idOrSlug, additionalCondition = { deletedAt: 0 }) {
     const where = /^\d+$/.test(idOrSlug) ? { id: idOrSlug } : { slug: idOrSlug };
     const post = await entities.get('BlogPosts').findOne({
-      where: Object.assign(where, {
-        deletedAt
-      }),
+      where: Object.assign(where, additionalCondition),
       include: [{
         model: entities.get('BlogTexts'),
         as: 'text'
@@ -151,8 +50,8 @@ ${post.text.content}
     return post;
   }
 
-  async getWithNeighbor(idOrSlug, deletedAt = 0) {
-    const post = await this.get(idOrSlug, deletedAt);
+  async getWithNeighbor(idOrSlug, additionalCondition = { deletedAt: 0, status: 'published' }) {
+    const post = await this.get(idOrSlug, additionalCondition);
     const [prev, next] = await Promise.all([
       this.getPrev(post),
       this.getNext(post)
@@ -215,11 +114,6 @@ ${post.text.content}
       tags: tags.filter(t => !t.id)
     });
 
-
-    // const errors = await entity.build(input).validate();
-    // if (errors) {
-    //   throw new exceptions.ModelInvalidateException(errors);
-    // }
     Object.assign(input, { userId });
     const transaction = await entities.getTransaction();
     try {
@@ -230,7 +124,6 @@ ${post.text.content}
         const t = await entities.get('BlogTags').create(tag, { transaction });
         await post.addTags([t], { transaction });
       }
-      // post.addTagsPosts(input.tagsPosts, { transaction });
       for (const tagPost of input.tagsPosts) {
         await entities.get('BlogTagsPosts').create(tagPost, { transaction });
       }
@@ -263,5 +156,16 @@ ${post.text.content}
       deletedAt: utils.getTimestamp()
     });
     return post;
+  }
+
+  async upsert(input, userId) {
+    const { slug } = input;
+    assert(slug, 'Slug must exists for upsert a post');
+    const post = await entities.get('BlogPosts').findOne({
+      where: {
+        slug
+      }
+    });
+    return post ? this.update(post.id, input, userId) : this.create(input, userId);
   }
 }
