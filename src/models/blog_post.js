@@ -35,13 +35,19 @@ ${post.text.content}
     ]);
     assert(post && text, 'Blog post or text not exists');
 
-    const rawText = await this.getContentFromGithub(post);
+    const { rawText, contentRemoteHash } = await this.getPostFromGithub(post);
+    if (contentRemoteHash === post.contentRemoteHash) {
+      DI.get('logger').warn('Post not updated by same hash', contentRemoteHash);
+      return false;
+    }
+
     const { frontMatter: { title, date, tags }, content }
       = this.constructor.hexoParser(rawText, post.id);
     return this.update(id, {
       title,
       createdAt: moment(date).unix(),
       tags: tags.map(tagName => ({ tagName })),
+      contentRemoteHash,
       contentSynchronizedAt: DI.get('now').getTimestamp(),
       text: {
         content
@@ -49,25 +55,51 @@ ${post.text.content}
     }, 0);
   }
 
+  /**
+   * @param rawText
+   * @param filename
+   * @returns {{frontMatter: *, content: string}}
+   */
   static hexoParser(rawText, filename) {
-    const splitMark = '---\n';
+    const splitMark = '---';
     if (!rawText.startsWith(splitMark)) {
-      throw new SyntaxError(`Unrecognizable hexo file ${filename}`);
+      throw new SyntaxError(`Unrecognizable hexo file ${filename}, no front matter found`);
     }
-
     const [, frontMatter, ...contents] = rawText.split(splitMark);
+    if (contents.length < 1) {
+      throw new SyntaxError(`Unrecognizable hexo file ${filename}, no content found`);
+    }
     return {
       frontMatter: yaml.load(frontMatter),
-      content: contents.join(splitMark).trimLeft()
+      content: contents.join(splitMark).trim()
     };
   }
 
-  async getContentFromGithub(post) {
+  async getPostFromGithub(post) {
     const config = DI.get('config');
     const year = moment.unix(post.createdAt).format('YYYY');
-    return DI.get('http_client').request({
-      url: `https://raw.githubusercontent.com/${config.get('blog.repo')}/master/source/_posts/${year}/${post.slug}.md`
-    });
+    const {
+      repository:
+        {
+          object: { commitUrl, text }
+        }
+    } = await DI.get('github').queryGraphQL(`
+    {
+      repository(owner: "${config.get('blog.githubOwner')}", name: "${config.get('blog.githubRepo')}") {
+        object(expression: "${config.get('blog.githubBranch')}:source/_posts/${year}/${post.slug}.md") {
+          commitUrl
+          ... on Blob {
+            text
+            commitUrl
+          }
+        }
+      }
+    }
+    `);
+    return {
+      contentRemoteHash: commitUrl.split('/').pop(),
+      rawText: text
+    };
   }
 
   async getPrev(post) {
@@ -98,8 +130,8 @@ ${post.text.content}
     });
   }
 
-  async get(idOrslug, deletedAt = 0) {
-    const where = /^\d+$/.test(idOrslug) ? { id: idOrslug } : { slug: idOrslug };
+  async get(idOrSlug, deletedAt = 0) {
+    const where = /^\d+$/.test(idOrSlug) ? { id: idOrSlug } : { slug: idOrSlug };
     const post = await entities.get('BlogPosts').findOne({
       where: Object.assign(where, {
         deletedAt
@@ -119,8 +151,8 @@ ${post.text.content}
     return post;
   }
 
-  async getWithNeibor(idOrslug, deletedAt = 0) {
-    const post = await this.get(idOrslug, deletedAt);
+  async getWithNeighbor(idOrSlug, deletedAt = 0) {
+    const post = await this.get(idOrSlug, deletedAt);
     const [prev, next] = await Promise.all([
       this.getPrev(post),
       this.getNext(post)
@@ -161,9 +193,9 @@ ${post.text.content}
         }],
         transaction
       });
-      transaction.commit();
+      await transaction.commit();
     } catch (e) {
-      transaction.rollback();
+      await transaction.rollback();
       throw new exceptions.DatabaseIOException(e);
     }
     return this.get(post.id);

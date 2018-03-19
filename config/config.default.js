@@ -1,9 +1,10 @@
 module.exports = {
   blog: {
-    repoPrivate: false,
-    repoToken: '',
-    repo: 'AlloVince/avnpc.content',
-    hexoSourcePath: '/opt/htdocs/avnpc.content/source/_posts'
+    hexoSourcePath: '/opt/htdocs/avnpc.content/source/_posts',
+    githubOwner: 'AlloVince',
+    githubRepo: 'avnpc.content',
+    githubBranch: 'master',
+    githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || ''
   },
   sequelize: {
     logging: true

@@ -1,4 +1,5 @@
 import { EvaEngine, DI } from 'evaengine';
+import init from './init';
 import * as BlogCommands from './commands/blog';
 
 const engine = new EvaEngine({
@@ -10,7 +11,11 @@ engine.registerCommands([
 const logger = DI.get('logger');
 const timeout = process.env.STOP_TIMEOUT || 60;
 
-engine.runCrontab('0/10 * * * * *', 'hello:world --id=EvaEngine');
+
+(async () => {
+  await init(engine);
+  engine.runCrontab('0/10 * * * * *', 'hello:world --id=EvaEngine');
+})();
 
 ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGTERM', 'SIGABRT', 'SIGTSTP'].forEach((signal) => {
   process.on(signal, (sig) => {
@@ -25,4 +30,8 @@ engine.runCrontab('0/10 * * * * *', 'hello:world --id=EvaEngine');
       }
     }, 1000);
   });
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('unhandledRejection:', reason, promise);
 });

@@ -65,6 +65,11 @@ export default DataTypes => ({
       type: DataTypes.STRING(255),
       comment: '正文远程URL'
     },
+    contentRemoteHash: {
+      allowNull: true,
+      type: DataTypes.STRING(64),
+      comment: '正文远程Hash'
+    },
     contentSynchronizedAt: {
       allowNull: false,
       type: DataTypes.INTEGER(10).UNSIGNED,

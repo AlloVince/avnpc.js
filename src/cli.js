@@ -1,4 +1,5 @@
 import { EvaEngine, DI, exceptions } from 'evaengine';
+import init from './init';
 import * as BlogCommands from './commands/blog';
 
 const engine = new EvaEngine({
@@ -7,14 +8,10 @@ const engine = new EvaEngine({
 engine.registerCommands([
   BlogCommands
 ]);
-
 const logger = DI.get('logger');
-global.p = (...args) => {
-  logger.debug(...args);
-};
 
-
-(async() => {
+(async () => {
+  await init(engine);
   try {
     await engine.runCLI();
   } catch (e) {

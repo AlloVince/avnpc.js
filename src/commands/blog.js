@@ -72,6 +72,7 @@ export class BlogExportHexo extends Command {
     const {
       id
     } = this.getOptions();
+
     const posts = id ? [{ id }] : await entities.get('BlogPosts').findAll({
       attributes: ['id'],
       where: {
