@@ -6,6 +6,16 @@ module.exports = {
     githubBranch: 'master',
     githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || ''
   },
+  evernote: {
+    consumerKey: '',
+    consumerSecret: '',
+    sandbox: true,
+    china: false,
+    token: '',
+    callbackDomain: '',
+    defaultNotebook: '',
+    sharedId: 's1'
+  },
   sequelize: {
     logging: true
   },

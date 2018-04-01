@@ -1,12 +1,15 @@
 import { EvaEngine, DI, exceptions } from 'evaengine';
+import { inspect } from 'util';
 import init from './init';
 import * as BlogCommands from './commands/blog';
+import * as EverNoteCommands from './commands/evernote';
 
 const engine = new EvaEngine({
   projectRoot: `${__dirname}/..`
 }, 'cli');
 engine.registerCommands([
-  BlogCommands
+  BlogCommands,
+  EverNoteCommands
 ]);
 const logger = DI.get('logger');
 
@@ -19,7 +22,8 @@ const logger = DI.get('logger');
       logger.warn(e.getDetails());
       return logger.warn(e.message);
     }
-    logger.error(e);
+    logger.error(inspect(e));
+    // logger.error(e);
   }
   const redis = DI.get('redis');
   if (redis.isConnected()) {

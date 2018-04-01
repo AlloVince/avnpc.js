@@ -81,6 +81,7 @@ const logger = DI.get('logger');
   app.use('/v1/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
   app.use('/v1/blog', require('./routes/api/blog'));
+  app.use('/v1/evernote', require('./routes/api/evernote'));
   app.use('/v1/manage/blog', session, auth, require('./routes/manage/blog'));
   //-----------Routers End
   engine.run();
