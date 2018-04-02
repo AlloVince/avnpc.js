@@ -33,8 +33,12 @@ export class Note {
   static contentToHtml({
     guid, content, sharedKey, resources
   }) {
+    if (!content) {
+      return null;
+    }
+    const dom = cheerio.load(content, { xmlMode: true, decodeEntities: false });
     if (!resources || resources.length < 1) {
-      return content;
+      return dom('en-note').html();
     }
     const hashedResources = resources.map(r => ({
       guid: r.guid,
@@ -43,7 +47,6 @@ export class Note {
       width: r.width,
       height: r.height
     }));
-    const dom = cheerio.load(content, { xmlMode: true, decodeEntities: false });
     const config = DI.get('config').get('evernote');
     const { sharedId, sandbox } = config;
     dom('en-media').each((i, media) => {
@@ -61,7 +64,9 @@ export class Note {
     return dom('en-note').html();
   }
 
-  static async factory(rawNote, sharedId, sharedKey) {
+  static async factory({
+    rawNote, sharedId, sharedKey, tagNames = []
+  }) {
     const {
       guid,
       title,
@@ -73,7 +78,7 @@ export class Note {
       deleted,
       active,
       notebookGuid,
-      tagGuids,
+      // tagGuids,
       resources
     } = rawNote;
     const publicContent = Note.contentToHtml({
@@ -99,7 +104,7 @@ export class Note {
       updatedAt,
       deletedAt,
       notebookId: notebookGuid,
-      tags: tagGuids
+      tags: tagNames ? tagNames.map(tag => ({ tagName: tag })) : []
     });
   }
 
@@ -118,13 +123,14 @@ export class Note {
     this.id = id;
     this.slug = id;
     this.title = title;
+    this.codeType = 'html';
     this.status = status;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
     this.contentHash = contentHash;
     this.notebookId = notebookId;
-    this.content = content;
+    this.text = { content };
     this.tags = tags;
   }
 }
@@ -207,8 +213,13 @@ export default class EvernoteManager {
     );
     return {
       total,
-      notes: await Promise.all(notes.map(note => Note.factory(note)))
+      notes: await Promise.all(notes.map(rawNote => Note.factory({ rawNote })))
     };
+  }
+
+  async listTags(notebookId) {
+    const noteStore = this.client.getNoteStore();
+    return notebookId ? noteStore.listTagsByNotebook(notebookId) : noteStore.listTags();
   }
 
   async shareNote(noteId) {
@@ -220,10 +231,14 @@ export default class EvernoteManager {
    * @returns {Promise<Note>}
    */
   async getNote(noteId) {
-    const [rawNote, sharedKey] = await Promise.all([
-      this.client.getNoteStore().getNote(noteId, true, false, true, true),
-      this.client.getNoteStore().shareNote(noteId)
+    const noteStore = this.client.getNoteStore();
+    const [rawNote, sharedKey, tagNames] = await Promise.all([
+      noteStore.getNote(noteId, true, false, true, true),
+      noteStore.shareNote(noteId),
+      noteStore.getNoteTagNames(noteId)
     ]);
-    return Note.factory(rawNote, this.sharedId, sharedKey);
+    return Note.factory({
+      rawNote, sharedId: this.sharedId, sharedKey, tagNames
+    });
   }
 }
