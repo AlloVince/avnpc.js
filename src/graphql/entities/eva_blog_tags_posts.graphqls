@@ -1,0 +1,13 @@
+
+
+type eva_blog_tags_posts {
+  # ID
+  id: Int,
+
+  # TAG ID
+  tagId: Int,
+
+  # POST ID
+  postId: Int,
+
+}

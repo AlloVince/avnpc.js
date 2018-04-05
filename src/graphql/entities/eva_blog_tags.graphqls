@@ -1,0 +1,22 @@
+
+
+type Tag {
+  # ID
+  id: Int,
+
+  # Tag名
+  tagName: String,
+
+  # 父ID
+  parentId: Int,
+
+  # 根ID
+  rootId: Int,
+
+  # 排序编号
+  sortOrder: Int,
+
+  # 统计
+  count: Int,
+
+}

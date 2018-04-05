@@ -13,8 +13,8 @@ module.exports = {
     china: false,
     token: '',
     callbackDomain: '',
-    defaultNotebook: '',
-    sharedId: 's1'
+    defaultNotebookId: '',
+    sharedId: ''
   },
   sequelize: {
     logging: true

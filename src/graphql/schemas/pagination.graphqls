@@ -1,0 +1,11 @@
+# 分页
+type Pagination {
+    # 总数
+    total: Int,
+
+    # 偏移量
+    offset: Int,
+
+    # 每页数量
+    limit: Int
+}

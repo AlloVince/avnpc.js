@@ -2,9 +2,6 @@ import { EvaEngine, DI, express } from 'evaengine';
 import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
-import { makeExecutableSchema } from 'graphql-tools';
-import entities from './entities';
 import init from './init';
 
 
@@ -13,6 +10,7 @@ const engine = new EvaEngine({
   port: process.env.PORT || 3000
 });
 const logger = DI.get('logger');
+global.p = logger.dump;
 
 (async () => {
   await init(engine);
@@ -41,45 +39,9 @@ const logger = DI.get('logger');
   const auth = DI.get('auth')();
 
   /* eslint-disable global-require */
-  // The GraphQL endpoint
-  app.use('/v1/graphql', bodyParser.json(), graphqlExpress({
-    schema: makeExecutableSchema({
-      typeDefs: `
-      type Query { 
-        posts(offset: Int, limit: Int, order: String): PostFeed
-      }
-      type Pagination {
-        "总数"
-        total: Int,
-        offset: Int,
-        limit: Int
-      }
-      type Post { 
-        id: ID, title: String, slug: String 
-      }
-      type PostFeed {
-        pagination: Pagination
-        results: [Post]
-      }
-    `,
-      resolvers: {
-        Query: {
-          posts: async (group, { offset, limit = 10 }) => {
-            console.log('graphql test');
-            return {
-              pagination: {
-                total: 10
-              },
-              results: await entities.get('BlogPosts').findAll({ offset, limit })
-            };
-          }
-        }
-      }
-    })
-  }));
-  // GraphiQL, a visual editor for queries
-  app.use('/v1/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
+
+  app.use('/v1/graphql', require('./routes/graphql'));
   app.use('/v1/blog', require('./routes/api/blog'));
   app.use('/v1/evernote', require('./routes/api/evernote'));
   app.use('/v1/manage/blog', session, auth, require('./routes/manage/blog'));

@@ -61,11 +61,13 @@
     "dotenv": "^5.0.1",
     "evaengine": "^0.7.0",
     "evernote": "^2.0.5",
+    "glob": "^7.1.2",
     "graphql": "^0.13.1",
+    "graphql-import": "^0.5.0",
     "graphql-tools": "^2.23.0",
     "graphql-tools-types": "^1.1.14",
     "js-yaml": "^3.11.0",
-    "marked": "^0.3.17",
+    "lodash": "^4.17.5",
     "mkdirp": "^0.5.1",
     "moment-timezone": "^0.5.14",
     "passport": "^0.4.0",
@@ -74,6 +76,7 @@
     "source-map-support": "^0.5.4"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.35",
     "ava": "^0.25.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",

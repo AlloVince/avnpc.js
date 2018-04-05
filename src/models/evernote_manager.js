@@ -25,7 +25,9 @@ export class Note {
     const resource = hashedResources.find(r => r.hash === hash);
     const domain = sandbox ? 'sandbox.evernote.com' : 'www.evernote.com';
     const extension = ({
-      'image/png': 'png'
+      'image/png': 'png',
+      'image/jpeg': 'jpg',
+      'image/gif': 'gif'
     })[resource.mime];
     return `https://${domain}/shard/${sharedId}/sh/${guid}/${sharedKey}/res/${resource.guid}.${extension}`;
   }
@@ -178,10 +180,18 @@ export default class EvernoteManager {
     return noteStore.listNotebooks();
   }
 
+  /**
+   * @param notebookId
+   * @param order
+   * @param ascending
+   * @param offset
+   * @param limit
+   * @returns {Promise<{total: *, notes: any[]}>}
+   */
   async listNotes({
-    notebookGuid,
+    notebookId,
     order = ORDERS.CREATED,
-    ascending = true,
+    ascending = false,
     offset = 0,
     limit = 100
   }) {
@@ -191,7 +201,7 @@ export default class EvernoteManager {
       notes
     } = await this.client.getNoteStore().findNotesMetadata(
       new Evernote.NoteStore.NoteFilter({
-        notebookGuid,
+        notebookGuid: notebookId || DI.get('config').get('evernote.defaultNotebookId'),
         order,
         ascending
       }),

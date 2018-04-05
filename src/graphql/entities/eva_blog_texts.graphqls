@@ -1,0 +1,20 @@
+
+
+type Text {
+  # ID
+  id: Int,
+
+  # 文章ID
+  postId: Int,
+
+  # Meta Keywords
+  metaKeywords: String,
+
+  # Meta Description
+  metaDescription: String,
+
+  # 文章正文
+  content: String,
+
+}
+
