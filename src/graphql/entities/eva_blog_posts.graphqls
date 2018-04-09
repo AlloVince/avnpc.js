@@ -18,7 +18,7 @@ enum ENUM_Post_commentStatus {
 
 type Post {
   # ID
-  id: Int,
+  id: Int!,
 
   # 标题
   title: String,

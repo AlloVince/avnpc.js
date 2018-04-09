@@ -2,7 +2,7 @@
 
 type Text {
   # ID
-  id: Int,
+  id: Int!,
 
   # 文章ID
   postId: Int,
@@ -17,4 +17,3 @@ type Text {
   content: String,
 
 }
-

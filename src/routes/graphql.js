@@ -13,7 +13,7 @@ const resolvers = [postResolver];
 router.use('/api', bodyParser.json(), graphqlExpress({
   schema: makeExecutableSchema({
     typeDefs: [...Graphqls.getSchemas(), ...resolvers.map(({ schema }) => schema)],
-    resolvers: { Query: merge(...resolvers.map(({ resolver }) => resolver)) }
+    resolvers: merge(...resolvers.map(({ resolver }) => resolver))
   })
 }));
 

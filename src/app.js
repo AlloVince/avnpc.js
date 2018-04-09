@@ -10,7 +10,7 @@ const engine = new EvaEngine({
   port: process.env.PORT || 3000
 });
 const logger = DI.get('logger');
-global.p = logger.dump;
+global.p = (...args) => logger.dump(...args);
 
 (async () => {
   await init(engine);

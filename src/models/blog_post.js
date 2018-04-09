@@ -3,7 +3,7 @@ import assert from 'assert';
 import entities from '../entities';
 
 export default class BlogPost {
-  async getPrev(post) {
+  static async getPrev(post) {
     return entities.get('BlogPosts').findOne({
       where: {
         id: {
@@ -17,7 +17,7 @@ export default class BlogPost {
     });
   }
 
-  async getNext(post) {
+  static async getNext(post) {
     return entities.get('BlogPosts').findOne({
       where: {
         id: {
@@ -53,8 +53,8 @@ export default class BlogPost {
   async getWithNeighbor(idOrSlug, additionalCondition = { deletedAt: 0, status: 'published' }) {
     const post = await this.get(idOrSlug, additionalCondition);
     const [prev, next] = await Promise.all([
-      this.getPrev(post),
-      this.getNext(post)
+      BlogPost.getPrev(post),
+      BlogPost.getNext(post)
     ]);
     return Object.assign(post.get(), {
       prev,

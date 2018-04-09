@@ -64,6 +64,7 @@
     "glob": "^7.1.2",
     "graphql": "^0.13.1",
     "graphql-import": "^0.5.0",
+    "graphql-list-fields": "^2.0.2",
     "graphql-tools": "^2.23.0",
     "graphql-tools-types": "^1.1.14",
     "js-yaml": "^3.11.0",

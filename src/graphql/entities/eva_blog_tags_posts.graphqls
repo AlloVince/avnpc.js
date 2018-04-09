@@ -2,7 +2,7 @@
 
 type eva_blog_tags_posts {
   # ID
-  id: Int,
+  id: Int!,
 
   # TAG ID
   tagId: Int,
