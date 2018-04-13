@@ -5,7 +5,7 @@ type Tag {
   id: Int!,
 
   # Tag名
-  tagName: String,
+  tagName: String!,
 
   # 父ID
   parentId: Int,

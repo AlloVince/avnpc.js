@@ -1,0 +1,53 @@
+
+enum ENUM_Note_status {
+  draft,published,pending
+}
+
+
+type NoteText {
+  # 正文内容
+  content: String!,
+}
+
+# 笔记
+type Note {
+  # ID
+  id: Int!,
+
+  # 标题
+  title: String!,
+
+  # 状态
+  status: ENUM_Note_status!,
+
+  # 原始代码类型
+  codeType: String!,
+
+  # Notebook ID
+  notebookId: Int!,
+
+  # 唯一标示
+  slug: String!,
+
+  # 创建时间
+  createdAt: Int!,
+
+  # 更新时间
+  updatedAt: Int!,
+
+  # 内容Hash
+  contentHash: String!,
+
+  # 来源
+  sourceName: String,
+
+  # 来源Url
+  sourceUrl: String,
+
+  # 删除时间
+  deletedAt: Int!,
+
+  # 笔记正文
+  text: NoteText
+
+}

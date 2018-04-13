@@ -21,31 +21,31 @@ type Post {
   id: Int!,
 
   # 标题
-  title: String,
+  title: String!,
 
   # 状态
-  status: ENUM_Post_status,
+  status: ENUM_Post_status!,
 
   # 可见性
-  visibility: ENUM_Post_visibility,
+  visibility: ENUM_Post_visibility!,
 
   # 分类
-  type: String,
+  type: String!,
 
   # 原始代码类型
-  codeType: String,
+  codeType: String!,
 
   # 语言
-  language: String,
+  language: String!,
 
   # 父ID
-  parentId: Int,
+  parentId: Int!,
 
   # 唯一标示
-  slug: String,
+  slug: String!,
 
   # 正文存储方式[本地|远程]
-  contentStorage: ENUM_Post_contentStorage,
+  contentStorage: ENUM_Post_contentStorage!,
 
   # 正文远程URL
   contentRemoteUrl: String,
@@ -54,22 +54,22 @@ type Post {
   contentRemoteHash: String,
 
   # 正文上次同步时间
-  contentSynchronizedAt: Int,
+  contentSynchronizedAt: Int!,
 
   # 排序
-  sortOrder: Int,
+  sortOrder: Int!,
 
   # 创建时间
-  createdAt: Int,
+  createdAt: Int!,
 
   # 创建用户ID
-  userId: Int,
+  userId: Int!,
 
   # 创建用户名
   username: String,
 
   # 更新时间
-  updatedAt: Int,
+  updatedAt: Int!,
 
   # 更新用户ID
   editorId: Int,
@@ -78,19 +78,19 @@ type Post {
   editorName: String,
 
   # 评论状态
-  commentStatus: ENUM_Post_commentStatus,
+  commentStatus: ENUM_Post_commentStatus!,
 
   # 评论类型
-  commentType: String,
+  commentType: String!,
 
   # 评论数量
-  commentCount: Int,
+  commentCount: Int!,
 
   # 访问量
-  viewCount: Int,
+  viewCount: Int!,
 
   # 封面ID
-  imageId: Int,
+  imageId: Int!,
 
   # 封面URL
   image: String,
@@ -105,6 +105,6 @@ type Post {
   sourceUrl: String,
 
   # 删除时间
-  deletedAt: Int,
+  deletedAt: Int!,
 
 }

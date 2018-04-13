@@ -4,7 +4,6 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import init from './init';
 
-
 const engine = new EvaEngine({
   projectRoot: `${__dirname}/..`,
   port: process.env.PORT || 3000
@@ -23,7 +22,7 @@ global.p = (...args) => logger.dump(...args);
   app.set('trust proxy', () => true);
 
   //-----------Middleware Start
-  app.use(DI.get('trace')('eva_skeleton'));
+  app.use(DI.get('trace')('avnpc.js'));
   app.use(DI.get('debug')());
   app.use(express.static(path.join(__dirname, '/../public')));
   app.use(cors({
@@ -39,8 +38,6 @@ global.p = (...args) => logger.dump(...args);
   const auth = DI.get('auth')();
 
   /* eslint-disable global-require */
-
-
   app.use('/v1/graphql', require('./routes/graphql'));
   app.use('/v1/blog', require('./routes/api/blog'));
   app.use('/v1/evernote', require('./routes/api/evernote'));

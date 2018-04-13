@@ -14,7 +14,8 @@
   "plugins": [
     [
       "transform-decorators-legacy",
-      "transform-object-rest-spread"
+      "transform-object-rest-spread",
+      "graphql-tag",
     ]
   ]
 }

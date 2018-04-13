@@ -2,12 +2,21 @@ import fs from 'fs';
 import path from 'path';
 import glob from 'glob';
 
-const schemas = [];
-export default class {
+export default class GraphqlBoot {
+  static getDefaultSchema() {
+    return `type Query {
+  health: Boolean!
+}`;
+  }
+
+  static getDefaultResolver() {
+    return {
+      Query: { health: () => true }
+    };
+  }
+
   static getSchemas() {
-    if (schemas.length > 0) {
-      return schemas;
-    }
+    const schemas = [GraphqlBoot.getDefaultSchema()];
     const schemaFiles = glob.sync(path.normalize(`${__dirname}/../*/**/*.graphqls`));
     schemaFiles.forEach((file) => {
       schemas.push(fs.readFileSync(file).toString());

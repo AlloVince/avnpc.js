@@ -1,17 +1,19 @@
 import DataLoader from 'dataloader';
 import { sequelize, utils } from 'evaengine';
+import gql from 'graphql-tag';
 import entities from '../../entities';
 import BlogPost from '../../models/blog_post';
 
-export const schema = `  
-type PostFeed {
+export const schema = gql`  
+type Posts {
     pagination: Pagination
     results: [Post]
 }
-type Query {
-    posts(offset: Int, limit: Int, order: String): PostFeed
+extend type Query {
+    posts(offset: Int, limit: Int, order: String): Posts
 }
 extend type Post {
+    tags: [Tag]
     text: Text
     prev: Post
     next: Post
@@ -20,6 +22,13 @@ extend type Post {
 
 export const resolver = {
   Post: {
+    tags: async (post) => {
+      const rels = await entities.get('BlogTagsPosts').findAll({ where: { postId: post.id } });
+      if (!rels || rels.length < 1) {
+        return [];
+      }
+      return entities.get('BlogTags').findAll({ where: { id: rels.map(r => r.tagId) } });
+    },
     text: post => (
       new DataLoader(async ids =>
         entities.get('BlogTexts').findAll({

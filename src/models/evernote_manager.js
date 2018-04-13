@@ -80,9 +80,14 @@ export class Note {
       deleted,
       active,
       notebookGuid,
-      // tagGuids,
-      resources
+      resources,
+      attributes
     } = rawNote;
+
+    const {
+      source: sourceName,
+      sourceURL: sourceUrl
+    } = attributes || {};
     const publicContent = Note.contentToHtml({
       guid,
       content,
@@ -106,6 +111,8 @@ export class Note {
       updatedAt,
       deletedAt,
       notebookId: notebookGuid,
+      sourceName,
+      sourceUrl,
       tags: tagNames ? tagNames.map(tag => ({ tagName: tag })) : []
     });
   }
@@ -120,6 +127,8 @@ export class Note {
     deletedAt,
     status,
     notebookId,
+    sourceName,
+    sourceUrl,
     tags
   }) {
     this.id = id;
@@ -130,6 +139,8 @@ export class Note {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
+    this.sourceName = sourceName;
+    this.sourceUrl = sourceUrl;
     this.contentHash = contentHash;
     this.notebookId = notebookId;
     this.text = { content };
