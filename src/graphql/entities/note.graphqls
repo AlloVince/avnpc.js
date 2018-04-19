@@ -9,10 +9,30 @@ type NoteText {
   content: String!,
 }
 
-# 笔记
+type NoteSummary {
+  # ID
+  id: String!,
+
+  # 标题
+  title: String!,
+
+  # Notebook ID
+  notebookId: String!,
+
+  # 唯一标示
+  slug: String!,
+
+  # 创建时间
+  createdAt: Int!,
+
+  # 更新时间
+  updatedAt: Int!,
+}
+
+# 笔记完整信息
 type Note {
   # ID
-  id: Int!,
+  id: String!,
 
   # 标题
   title: String!,
@@ -24,7 +44,7 @@ type Note {
   codeType: String!,
 
   # Notebook ID
-  notebookId: Int!,
+  notebookId: String!,
 
   # 唯一标示
   slug: String!,
