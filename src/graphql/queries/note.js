@@ -1,4 +1,4 @@
-import { graphql, GraphqlSchema } from 'graphql-boot/lib';
+import { graphql, GraphqlSchema } from 'graphql-boot';
 import { exceptions } from 'evaengine';
 import EvernoteManager, { ORDERS } from '../../models/evernote_manager';
 
