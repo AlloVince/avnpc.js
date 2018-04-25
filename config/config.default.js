@@ -27,6 +27,9 @@ module.exports = {
     port: process.env.REDIS_PORT || 6379
   },
   db: {
+    migrationPaths: [
+      'migrations/blog'
+    ],
     dialect: 'mysql',
     port: process.env.DB_PORT || 3306,
     database: process.env.DB_DATABASE || '',
