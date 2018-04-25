@@ -79,8 +79,8 @@ module.exports = {
   },
   swagger: {
     info: {
-      title: 'EvaSkeleton API',
-      description: 'EvaSkeleton API',
+      title: 'avnpc.com API',
+      description: 'avnpc.com API',
       version: '1.0'
     },
     host: process.env.SWAGGER_HOST || 'localhost:3000',

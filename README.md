@@ -1,90 +1,37 @@
-# EvaSkeleton.js
+# avnpc.js
 
-[![Build Status](https://travis-ci.org/EvaEngine/EvaSkeleton.js.svg?branch=master)](https://travis-ci.org/EvaEngine/EvaSkeleton.js)
-[![Dependencies Status](https://david-dm.org/EvaEngine/EvaSkeleton.js.svg)](https://david-dm.org/EvaEngine/EvaSkeleton.js)
-[![License](https://img.shields.io/npm/l/evaengine.svg?maxAge=2592000?style=plastic)](https://github.com/EvaEngine/EvaSkeleton.js/blob/master/LICENSE)
+Backend API for avnpc.com
 
-A Skeleton project based on [EvaEngine.js](https://github.com/EvaEngine/EvaEngine.js)
+A pure node.js API service
 
-## Start with one line code:
-
-Prepare a empty directory:
-
-```
-mkdir myproject
-cd myproject
-```
-
-``` shell
-wget https://github.com/EvaEngine/EvaSkeleton.js/archive/master.tar.gz -O master.tar.gz && tar xvf master.tar.gz --strip 1 && rm master.tar.gz
-```
-
-## Install and Start develop:
-
-Requirements:
-
-- NodeJS >= v4.4.5
+- API style: both support RESTFul / GraphQL
+- Blog posts content be able to store in a github repo or an Evernote account
 
 
-*1*. Install global dependencies
+### Installation & development
 
 ```
 make pre-build
+make install
+cp config/default.js config/config.local.development.js
 ```
 
-*2*. Install project dependencies
+Change database configs due to your local environment
 
 ```
-make build
+make migrate
 ```
 
-*3*. Start project (development mode)
+After database ready, run web server by
 
 ```
 npm run dev
-```
-
-Visit http://localhost:3000/ to see HelloWorld web page demo
-
-*4*. Generate API documents
-
-```
 npm run swagger-dev
 ```
 
-Visit http://localhost:15638/ to see Swagger document demo
+Visit RESTFul API by `http://localhost:15638/`
+
+Visit GraphQL API by `http://localhost:3000/v1/graphql/ui`
 
 
-*5*. CLI command (development mode)
-
-```
-babel-node --harmony src/cli.js hello:world
-```
-
-*6*. Run unit test
-
-```
-npm test
-```
-
-## Deploy to production server
-
-*1*. Install global dependencies
-
-```
-make pre-build
-```
-
-*2*. Install project dependencies
-
-```
-make build
-```
-
-*3*. Compile & Start project
-
-```
-npm run build
-npm start
-```
 
