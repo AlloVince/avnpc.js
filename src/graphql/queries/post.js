@@ -1,6 +1,6 @@
 import DataLoader from 'dataloader';
-import { graphql, GraphqlSchema } from 'graphql-boot/lib';
-import { sequelize, utils } from 'evaengine';
+import { graphql, GraphqlSchema, Types, Connection } from 'graphql-boot';
+import { sequelize } from 'evaengine';
 import entities from '../../entities';
 import BlogPost from '../../models/blog_post';
 
@@ -55,36 +55,42 @@ export const resolver = {
   Query: {
 
     @GraphqlSchema(graphql`
-        type Posts {
-            pagination: Pagination
-            results: [Post]
+        type PostListingEdge {
+            cursor: String!
+            node: Post
+        }
+        type PostListingConnection {
+            totalCount: Int!
+            pageInfo: PageInfo!
+            edges: [PostListingEdge]
+            nodes: [Post]
         }
         extend type Query {
-            posts(offset: Int, limit: Int, order: String): Posts
+            postListings(first: Int, after:String, last:Int, before: String, order:SortOrder): PostListingConnection
         }
     `)
-    posts: async (source, args) => {
-      const { offset, limit = 10 } = args;
-      let { order } = args;
-      const orderScaffold = new utils.apiScaffold.OrderScaffold();
-      orderScaffold.setFields([
-        'createdAt'
-      ], 'createdAt', 'DESC');
-      order = orderScaffold.getOrderByQuery(order);
+    postListings: async (source, args) => {
+      const {
+        first, after, last, before, order = {
+          field: 'id',
+          direction: 'ASC'
+        }
+      } = args;
 
-      const { rows, count } = await entities.get('BlogPosts').findAndCountAll({
-        offset,
-        limit,
-        order
+      const connection = new Connection({
+        first,
+        after,
+        last,
+        before,
+        primaryKey: 'id',
+        order: (new Types.SortOrder(order)).toString()
       });
-      return {
-        pagination: {
-          total: count,
-          offset,
-          limit
-        },
-        results: rows
-      };
+
+      const query = connection.getSqlQuery();
+      const { count, rows } = await entities.get('BlogPosts').findAndCountAll(query);
+      connection.setTotalCount(count);
+      connection.setNodes(rows);
+      return connection.toJSON();
     }
   }
 };

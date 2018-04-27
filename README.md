@@ -2,11 +2,10 @@
 
 Backend API for avnpc.com
 
-A pure node.js API service
+A pure node.js blog micro service
 
 - API style: both support RESTFul / GraphQL
 - Blog posts content be able to store in a github repo or an Evernote account
-
 
 ### Installation & development
 
@@ -32,6 +31,4 @@ npm run swagger-dev
 Visit RESTFul API by `http://localhost:15638/`
 
 Visit GraphQL API by `http://localhost:3000/v1/graphql/ui`
-
-
 
