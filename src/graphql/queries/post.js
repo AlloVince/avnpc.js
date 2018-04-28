@@ -6,6 +6,14 @@ import BlogPost from '../../models/blog_post';
 
 export const schema = '';
 
+const textDataLoader = new DataLoader(async ids =>
+  entities.get('BlogTexts').findAll({
+    where: {
+      postId: ids
+    },
+    order: [[sequelize.fn('FIELD', sequelize.col('postId'), ...ids)]]
+  }));
+
 export const resolver = {
   Post: {
 
@@ -27,15 +35,7 @@ export const resolver = {
             text: Text
         }
     `)
-    text: post => (
-      new DataLoader(async ids =>
-        entities.get('BlogTexts').findAll({
-          where: {
-            postId: ids
-          },
-          order: [[sequelize.fn('FIELD', sequelize.col('postId'), ...ids)]]
-        }))
-    ).load(post.id),
+    text: post => textDataLoader.load(post.id),
 
     @GraphqlSchema(graphql`
         extend type Post {
