@@ -28,7 +28,7 @@ export class Note {
       'image/png': 'png',
       'image/jpeg': 'jpg',
       'image/gif': 'gif'
-    })[resource.mime];
+    })[resource.mine] || 'jpg';
     return `https://${domain}/shard/${sharedId}/sh/${guid}/${sharedKey}/res/${resource.guid}.${extension}`;
   }
 

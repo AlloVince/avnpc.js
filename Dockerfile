@@ -1,4 +1,4 @@
-FROM node:8.9.4-alpine
+FROM node:8.11.1-alpine
 
 RUN apk add --no-cache tzdata && \
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone

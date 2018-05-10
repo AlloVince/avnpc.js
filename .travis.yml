@@ -7,7 +7,7 @@ notifications:
   email: false
 
 node_js:
-  - '9'
+  - '10'
   - '8'
 install:
   - if [[ "${TRAVIS_TAG}" == "" ]]; then npm install; fi

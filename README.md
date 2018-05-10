@@ -5,9 +5,9 @@ Backend API for avnpc.com
 A pure node.js blog micro service
 
 - API style: both support RESTFul / GraphQL
-- Blog posts content be able to store in a github repo or an Evernote account
+- Blog posts content be able to store in a github repo (hexo compatibled) or an Evernote account
 
-### Installation & development
+## Installation & development
 
 ```
 make pre-build
@@ -32,3 +32,12 @@ Visit RESTFul API by `http://localhost:15638/`
 
 Visit GraphQL API by `http://localhost:3000/v1/graphql/ui`
 
+## Use Github repo as storage
+
+If database already have posts, it is able to exporting all posts as local hexo files by
+
+```
+ndoe build/cli.js blog:export:hexo
+```
+
+Make sure `config.blog.hexoSourcePath` configured before command run.
