@@ -1,5 +1,10 @@
 # avnpc.js
 
+[![Build Status](https://travis-ci.org/AlloVince/avnpc.js.svg?branch=master)](https://travis-ci.org/AlloVince/avnpc.js)
+[![Dependencies Status](https://david-dm.org/AlloVince/avnpc.js.svg)](https://david-dm.org/AlloVince/avnpc.js)
+[![License](https://img.shields.io/npm/l/avnpc.svg?maxAge=2592000?style=plastic)](https://github.com/AlloVince/avnpc.js/blob/master/LICENSE)
+
+
 Backend API for avnpc.com
 
 A pure node.js blog micro service
