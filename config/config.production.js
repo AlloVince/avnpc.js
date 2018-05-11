@@ -4,6 +4,7 @@ module.exports = {
   },
   evernote: {
     consumerKey: 'allovince',
+    consumerSecret: process.env.EVERNOTE_CONSUMERSECRET || '',
     sandbox: false,
     china: false,
     callbackDomain: process.env.EVERNOTE_CALLBACK_DOMAIN || 'https://api.avnpc.com',
