@@ -2,19 +2,27 @@ module.exports = {
   sequelize: {
     logging: false
   },
+  evernote: {
+    consumerKey: 'allovince',
+    sandbox: false,
+    china: false,
+    callbackDomain: process.env.EVERNOTE_CALLBACK_DOMAIN || 'https://api.avnpc.com',
+    sharedId: 's7',
+    defaultNotebookId: '4127acd7-f384-4d16-bed2-2aa3084a7d5c'
+  },
   db: {
-    database: 'YourDatabase',
+    database: 'avnpc',
     replication: {
       write: {
-        host: 'MySQL_Master_host',
-        username: 'MySQL_Master_user',
-        password: 'MySQL_Master_password'
+        host: process.env.DB_REPLICATION_WRITE_HOST || 'db',
+        username: process.env.DB_REPLICATION_WRITE_USERNAME || 'avnpc',
+        password: process.env.DB_REPLICATION_WRITE_PASSWORD || 'MySQL_password'
       },
       read: [
         {
-          host: 'MySQL_Slave_host',
-          username: 'MySQL_Slave_user',
-          password: 'MySQL_Slave_password'
+          host: process.env.DB_REPLICATION_READ0_HOST || 'db',
+          username: process.env.DB_REPLICATION_READ0_USERNAME || 'avnpc',
+          password: process.env.DB_REPLICATION_READ0_PASSWORD || 'MySQL_password'
         }
       ]
     }

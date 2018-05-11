@@ -134,6 +134,7 @@ export class Note {
     this.id = id;
     this.slug = id;
     this.title = title;
+    this.type = 'note';
     this.codeType = 'html';
     this.status = status;
     this.createdAt = createdAt;

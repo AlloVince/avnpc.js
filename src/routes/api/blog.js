@@ -22,6 +22,18 @@ const router = EvaEngine.createRouter();
          in: query
          type: integer
          description: Query limit
+       - name: tag
+         in: query
+         type: string
+         description: Tag name
+       - name: withTag
+         in: query
+         type: integer
+         description: Whether return with tags
+       - name: withText
+         in: query
+         type: integer
+         description: Whether return with text
        - name: order
          in: query
          type: string
@@ -56,12 +68,37 @@ router.get('/posts', wrapper(async (req, res) => {
   let { order } = req.query;
   order = orderScaffold.getOrderByQuery(order);
 
+  const { tag: tagName, withTag, withText } = req.query;
+  const tag = tagName ? await entities.get('BlogTags').findOne({ where: { tagName } }) : null;
+  if (tag) {
+    Object.assign(where, {
+      id: {
+        $in: entities.getSequelize().literal(`(SELECT DISTINCT(postId) FROM ${entities.get('BlogTagsPosts').getTableName()} WHERE tagId = ${tag.id})`)
+      }
+    });
+  }
+
+  const include = [];
+  if (withText) {
+    include.push({
+      model: entities.get('BlogTexts'),
+      as: 'text'
+    });
+  }
+  if (withTag) {
+    include.push({
+      model: entities.get('BlogTags'),
+      as: 'tags'
+    });
+  }
+
   const { offset, limit } = utils.paginationFilter(req.query, 15, 500);
   const posts = await entities.get('BlogPosts').findAndCountAll({
     offset,
     limit,
     order,
-    where
+    where,
+    include
   });
   return res.json({
     pagination: utils.pagination({

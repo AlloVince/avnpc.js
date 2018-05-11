@@ -7,12 +7,12 @@ module.exports = {
     githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || ''
   },
   evernote: {
-    consumerKey: '',
-    consumerSecret: '',
+    consumerKey: process.env.EVERNOTE_CONSUMERKEY || '',
+    consumerSecret: process.env.EVERNOTE_CONSUMERSECRET || '',
     sandbox: true,
     china: false,
-    token: '',
-    callbackDomain: '',
+    token: process.env.EVERNOTE_TOKEN || '',
+    callbackDomain: process.env.EVERNOTE_CALLBACK_DOMAIN || '',
     defaultNotebookId: '',
     sharedId: ''
   },
