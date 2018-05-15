@@ -1,10 +1,12 @@
 module.exports = {
   blog: {
     hexoSourcePath: '/opt/htdocs/avnpc.content/source/_posts',
-    githubOwner: 'AlloVince',
-    githubRepo: 'avnpc.content',
-    githubBranch: 'master',
-    githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || ''
+    githubOwner: process.env.GITHUB_OWNER || 'AlloVince',
+    githubRepo: process.env.GITHUB_REPO || 'avnpc.content',
+    githubBranch: process.env.GITHUB_BRANCH || 'master',
+    githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || '',
+    googleCustomSearchKey: '',
+    googleCustomSearchCx: ''
   },
   evernote: {
     consumerKey: process.env.EVERNOTE_CONSUMERKEY || '',

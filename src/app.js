@@ -41,6 +41,7 @@ global.p = (...args) => logger.dump(...args);
   app.use('/v1/graphql', require('./routes/graphql'));
   app.use('/v1/blog', require('./routes/api/blog'));
   app.use('/v1/evernote', require('./routes/api/evernote'));
+  app.use('/v1/search', require('./routes/api/search'));
   app.use('/v1/manage/blog', session, auth, require('./routes/manage/blog'));
   //-----------Routers End
   engine.run();

@@ -1,4 +1,8 @@
 module.exports = {
+  blog: {
+    googleCustomSearchKey: 'AIzaSyBOhMyOU9e5cMIUrZFR4Yr2a32FF1ePfn0',
+    googleCustomSearchCx: '005909242293933576388:h9kkzcmu7y8'
+  },
   sequelize: {
     logging: false
   },
