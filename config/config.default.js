@@ -1,12 +1,12 @@
 module.exports = {
   blog: {
-    hexoSourcePath: '/opt/htdocs/avnpc.content/source/_posts',
+    hexoSourcePath: process.env.HEXO_SOURCE_PATH || '/opt/htdocs/avnpc.content/source/_posts',
     githubOwner: process.env.GITHUB_OWNER || 'AlloVince',
     githubRepo: process.env.GITHUB_REPO || 'avnpc.content',
     githubBranch: process.env.GITHUB_BRANCH || 'master',
     githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || '',
-    googleCustomSearchKey: '',
-    googleCustomSearchCx: ''
+    googleCustomSearchKey: process.env.GOOGLE_CUSTOM_SEARCH_KEY || '',
+    googleCustomSearchCx: process.env.GOOGLE_CUSTOM_SEARCH_CX || ''
   },
   evernote: {
     consumerKey: process.env.EVERNOTE_CONSUMERKEY || '',

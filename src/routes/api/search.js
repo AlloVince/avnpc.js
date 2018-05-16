@@ -13,7 +13,7 @@ const googleResultsConvert = (input, req) => {
       req,
       total
     }),
-    results: input.items.map((item) => {
+    results: input.items ? input.items.map((item) => {
       const {
         title,
         link: url,
@@ -24,7 +24,7 @@ const googleResultsConvert = (input, req) => {
         url,
         summary
       };
-    })
+    }) : []
   };
 };
 
