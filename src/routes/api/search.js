@@ -28,6 +28,8 @@ const googleResultsConvert = (input, req) => {
   };
 };
 
+const viewCache = DI.get('view_cache');
+
 //@formatter:off
 /**
  @swagger
@@ -73,7 +75,7 @@ const googleResultsConvert = (input, req) => {
                  $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/', wrapper(async (req, res) => {
+router.get('/', viewCache(60 * 24), wrapper(async (req, res) => {
   const { q, offset } = req.query;
   const results = await DI.get('http_client').request({
     url: 'https://www.googleapis.com/customsearch/v1',

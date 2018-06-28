@@ -16,6 +16,7 @@ passport.use(
 );
 router.use(passport.initialize());
 
+const viewCache = DI.get('view_cache');
 
 //@formatter:off
 /**
@@ -99,7 +100,7 @@ router.get('/callback', session, passport.authenticate('evernote', {
                  $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/notes', wrapper(async (req, res) => {
+router.get('/notes', viewCache(15), wrapper(async (req, res) => {
   const { offset, limit } = utils.paginationFilter(req.query, 15, 500);
   const em = new EvernoteManager();
   const { total, notes } = await em.listNotes({
@@ -140,7 +141,7 @@ router.get('/notes', wrapper(async (req, res) => {
            $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/notes/:slug', wrapper(async (req, res) => {
+router.get('/notes/:slug', viewCache(60 * 24 * 30), wrapper(async (req, res) => {
   const em = new EvernoteManager();
   const { slug } = req.params;
   const note = await em.getNote(slug);

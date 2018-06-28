@@ -29,11 +29,13 @@ export default class HexoManager {
 
   /**
    * @param rawText
+   * @param contentRemoteHash
    * @param filename
-   * @returns {{title: *, slug, status: string,
-   *   createdAt: *, tags, username: *, text: {content: *}}}
+   * @returns {{title, slug: string, status: string, createdAt: *,
+   *  tags: *, username, contentStorage: string, contentRemoteHash: *,
+   * contentSynchronizedAt: *, text: {content: string}}}
    */
-  static hexoFileToPost({ rawText, contentRemoteHash }, filename) {
+  static hexoFileToPost({ rawText, contentRemoteHash, filename }) {
     const slug = filename.split('.').slice(0, -1).join('.');
     const {
       frontMatter: {
@@ -109,7 +111,7 @@ ${post.text.content}
       return false;
     }
 
-    const newPost = HexoManager.hexoFileToPost(rawText, filename);
+    const newPost = HexoManager.hexoFileToPost({ rawText, filename });
     return (new BlogPost()).upsert(newPost, 0);
   }
 
@@ -134,7 +136,7 @@ ${post.text.content}
       return false;
     }
 
-    const newPost = HexoManager.hexoFileToPost(hexoFile, name);
+    const newPost = HexoManager.hexoFileToPost({ rawText: hexoFile, filename: name });
     return (new BlogPost()).upsert(newPost, 0);
   }
 
@@ -150,7 +152,7 @@ ${post.text.content}
     }
     return files
       .map(file => Object.assign(file, { path }))
-      .filter(file => (slug ? file.name === `${slug},md` : true));
+      .filter(file => (slug ? file.name === `${slug}.md` : true));
   }
 
   static async getHexoFileFromGithub(filepath) {

@@ -1,8 +1,9 @@
-import { EvaEngine, exceptions, wrapper, utils } from 'evaengine';
+import { EvaEngine, DI, exceptions, wrapper, utils } from 'evaengine';
 import models from '../../models';
 import entities from '../../entities';
 
 const router = EvaEngine.createRouter();
+const viewCache = DI.get('view_cache');
 
 
 //@formatter:off
@@ -58,7 +59,7 @@ const router = EvaEngine.createRouter();
                  $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/posts', wrapper(async (req, res) => {
+router.get('/posts', viewCache(10), wrapper(async (req, res) => {
   const orderScaffold = new utils.apiScaffold.OrderScaffold();
   orderScaffold.setFields([
     'createdAt'
@@ -134,7 +135,7 @@ router.get('/posts', wrapper(async (req, res) => {
            $ref: '#/definitions/BlogPosts'
  */
 //@formatter:on
-router.get('/posts/:slug', wrapper(async (req, res) => {
+router.get('/posts/:slug', viewCache(30), wrapper(async (req, res) => {
   const blogModel = new models.BlogPost();
   const { slug } = req.params;
   const post = await blogModel.getWithNeighbor(slug);
