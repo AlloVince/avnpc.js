@@ -1,4 +1,6 @@
-import { EvaEngine, wrapper, DI, utils, exceptions } from 'evaengine';
+import {
+  EvaEngine, wrapper, DI, utils, exceptions
+} from 'evaengine';
 import passport from 'passport';
 import EvernoteManager from '../../models/evernote_manager';
 

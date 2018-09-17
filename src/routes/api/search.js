@@ -1,4 +1,6 @@
-import { EvaEngine, DI, wrapper, utils } from 'evaengine';
+import {
+  EvaEngine, DI, wrapper, utils
+} from 'evaengine';
 
 const router = EvaEngine.createRouter();
 

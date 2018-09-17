@@ -3,7 +3,7 @@ list:
 	@echo "pre-build"
 
 pre-build:
-	npm install -g nodemon babel-cli tramp-cli
+	npm install -g nodemon @babel/core @babel/node tramp-cli
 
 build: install
 
@@ -15,3 +15,7 @@ install:
 migrate:
 	tramp migrate
 
+travis-build-log:
+	printenv
+	echo "Branch: ${TRAVIS_BRANCH}\nCommit: ${TRAVIS_COMMIT}\nBuild Number:${TRAVIS_BUILD_NUMBER} \nTime: "`TZ=Asia/Shanghai date "+%Y-%m-%d %H:%M:%S"` > ./build/ci.txt
+	cat ./build/ci.txt

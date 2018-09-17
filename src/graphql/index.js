@@ -1,6 +1,6 @@
 import GraphqlBoot from 'graphql-boot';
-import * as postQuery from '../graphql/queries/post';
-import * as noteQuery from '../graphql/queries/note';
+import * as postQuery from './queries/post';
+import * as noteQuery from './queries/note';
 
 let graphqlBoot = null;
 const queries = [postQuery, noteQuery];
@@ -15,4 +15,3 @@ export const getGraphqlBoot = () => {
   });
   return graphqlBoot;
 };
-

@@ -21,4 +21,3 @@ export class EvernoteShowNotebooks extends Command { //eslint-disable-line
     logger.info(notebooks);
   }
 }
-

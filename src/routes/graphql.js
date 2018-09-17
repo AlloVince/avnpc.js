@@ -14,4 +14,3 @@ router.use('/api', graphqlExpress({
 router.use('/ui', graphiqlExpress({ endpointURL: '/v1/graphql/api' }));
 
 module.exports = router;
-

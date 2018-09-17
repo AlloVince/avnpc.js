@@ -13,4 +13,3 @@ moment.tz.setDefault('Asia/Shanghai');
 export default async (engine) => {
   engine.registerServiceProviders(Object.values(services));
 };
-

@@ -103,8 +103,8 @@ ${post.text.content}
 
   static async syncHexoFileFromGithub(oldPost) {
     const filename = `${oldPost.slug}.md`;
-    const { rawText, contentRemoteHash } =
-      await HexoManager.getHexoFileFromGithub(`source/_posts/${moment.unix(oldPost.createdAt).format('YYYY')}/${filename}`);
+    const { rawText, contentRemoteHash } = await HexoManager
+      .getHexoFileFromGithub(`source/_posts/${moment.unix(oldPost.createdAt).format('YYYY')}/${filename}`);
 
     if (contentRemoteHash === oldPost.contentRemoteHash) {
       DI.get('logger').warn('Post not updated by same hash', contentRemoteHash);

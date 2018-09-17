@@ -1,4 +1,6 @@
-import { EvaEngine, DI, wrapper, utils, exceptions } from 'evaengine';
+import {
+  EvaEngine, DI, wrapper, utils, exceptions
+} from 'evaengine';
 import models from '../../models';
 import entities from '../../entities';
 

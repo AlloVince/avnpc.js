@@ -41,8 +41,8 @@ export class BlogExportHexo extends Command {
     const root = DI.get('config').get('blog.hexoSourcePath');
     for (const post of posts) {
       try {
-        const path =
-          await HexoManager.exportPostToLocalHexoFile(await blogModel.get(post.id), root);
+        const path = await HexoManager
+          .exportPostToLocalHexoFile(await blogModel.get(post.id), root);
         success += 1;
         logger.info('Export blog post No.%s success to %s', post.id, path);
       } catch (e) {

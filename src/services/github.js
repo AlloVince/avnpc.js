@@ -17,8 +17,8 @@ const {
   }
 } = core;
 
-@Dependencies(Config) //eslint-disable-line new-cap
-export default class GithubAPIClient {
+export default @Dependencies(Config)
+class GithubAPIClient {
   /**
    * @param {Config} config
    */
