@@ -51,7 +51,7 @@ export default class HexoManager {
       slug,
       status: published ? 'published' : 'draft',
       createdAt: moment(date).unix(),
-      tags: tags.map(t => ({ tagName: t })),
+      tags: tags ? tags.map(t => ({ tagName: t })) : [],
       username: author,
       contentStorage: 'remote',
       contentRemoteHash,

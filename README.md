@@ -18,6 +18,19 @@ A pure node.js blog micro service
 3. Sync hexo repo posts to database once by command `node build/cli.js sync:github:db`
 4. Create a github webhook, set `http://avnpcjs_project/v1/github/hook` as Payload URL
 
+## How to use
+
+Create a post:
+- Write a post by `hexo new post "new post title" -s "new-post-slug"`
+- Commit and push to github
+- That's all
+
+Update a post:
+- Update hexo file on github
+
+Remove a post:
+- Change hexo file meta info from: `published: true` to `published: false`
+
 ## Development
 
 ```

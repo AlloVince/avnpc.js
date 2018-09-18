@@ -33,12 +33,14 @@ webhookHandler.on('*', (event, repo, data) => {
     return logger.debug('Github event [%s: %s] ignored by branch not match [%s:%s]', event, repo, branch, data.ref);
   }
   for (const commit of data.commits) {
-    if (!commit.modified || commit.modified.length < 1) {
+    //TODO: handle with commits.removed
+    const files = [].concat(commit.added, commit.modified);
+    if (files.length < 1) {
       logger.info('Github commit %s ignored by no modified file', commit.url);
       continue;
     }
     logger.info('Start handle Github commit %s with %s modified files, message: %s', commit.url, commit.modified.length, commit.message);
-    for (const file of commit.modified) {
+    for (const file of files) {
       if (!file.startsWith(postsPath)) {
         logger.info('Ignore Github commit file %s %s ', commit.url, commit.id, file);
         continue;
