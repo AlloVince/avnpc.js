@@ -24,10 +24,13 @@ const webhookHandler = GithubWebHook({
 //@formatter:on
 webhookHandler.on('*', (event, repo, data) => {
   const logger = DI.get('logger');
-  const postsPath = DI.get('config').get('blog.github.postsPath');
+  const { branch, postsPath } = DI.get('config').get('blog.github');
   logger.debug('Received Github event %s: %s', event, repo);
   if (event !== 'push' || !data.commits || data.commits.length < 1) {
-    return logger.debug('Github event ignored %s: %s', event, repo);
+    return logger.debug('Github event [%s: %s] ignored by no commit', event, repo);
+  }
+  if (data.ref !== `refs/heads/${branch}`) {
+    return logger.debug('Github event [%s: %s] ignored by branch not match [%s:%s]', event, repo, branch, data.ref);
   }
   for (const commit of data.commits) {
     if (!commit.modified || commit.modified.length < 1) {
