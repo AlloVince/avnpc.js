@@ -84,8 +84,8 @@ router.get('/', viewCache(60 * 24), wrapper(async (req, res) => {
     method: 'get',
     qs: {
       q,
-      key: DI.get('config').get('blog.googleCustomSearchKey'),
-      cx: DI.get('config').get('blog.googleCustomSearchCx'),
+      key: DI.get('config').get('blog.search.googleKey'),
+      cx: DI.get('config').get('blog.search.googleCx'),
       alt: 'json',
       start: offset
     },

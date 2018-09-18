@@ -60,11 +60,13 @@ global.p = (...args) => logger.dump(...args);
   const auth = DI.get('auth')();
 
   /* eslint-disable global-require */
+  app.use(require('./routes/api/github'));
   app.use('/v1/graphql', require('./routes/graphql'));
   app.use('/v1/blog', require('./routes/api/blog'));
   app.use('/v1/evernote', require('./routes/api/evernote'));
   app.use('/v1/search', require('./routes/api/search'));
   app.use('/v1/manage/blog', session, auth, require('./routes/manage/blog'));
+  app.use('/', require('./routes/index'));
   //-----------Routers End
 
   if (sentryConfig.enabled) {

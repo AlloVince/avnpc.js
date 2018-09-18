@@ -8,6 +8,7 @@ module.exports = {
       repo: process.env.BLOG_GITHUB_REPO || 'avnpc.content',
       branch: process.env.BLOG_GITHUB_BRANCH || 'master',
       token: process.env.BLOG_GITHUB_TOKEN || '',
+      webhookSecret: process.env.BLOG_GITHUB_WEBHOOKSECRET || '',
       postsPath: process.env.BLOG_GITHUB_POSTSPATH || 'source/_posts'
     },
     search: {

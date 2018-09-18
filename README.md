@@ -4,7 +4,6 @@
 [![Dependencies Status](https://david-dm.org/AlloVince/avnpc.js.svg)](https://david-dm.org/AlloVince/avnpc.js)
 [![License](https://img.shields.io/npm/l/avnpc.svg?maxAge=2592000?style=plastic)](https://github.com/AlloVince/avnpc.js/blob/master/LICENSE)
 
-
 Backend API for avnpc.com
 
 A pure node.js blog micro service
@@ -12,7 +11,14 @@ A pure node.js blog micro service
 - API style: both support RESTFul / GraphQL
 - Blog posts content be able to store in a github repo (hexo compatibled) or an Evernote account
 
-## Installation & development
+## Deployment
+
+1. Setup a github hexo repo like: `hexo init avnpc.content`
+2. Run avnpc.js server with database
+3. Sync hexo repo posts to database once by command `node build/cli.js sync:github:db`
+4. Create a github webhook, set `http://avnpcjs_project/v1/github/hook` as Payload URL
+
+## Development
 
 ```
 make pre-build
@@ -37,19 +43,12 @@ Visit RESTFul API by `http://localhost:15638/`
 
 Visit GraphQL API by `http://localhost:3000/v1/graphql/ui`
 
-## Use Github repo as storage
+### How to test webhook
 
-If database already have posts, it is able to exporting all posts as local hexo files by
-
+``` bash
+brew cask install ngrok
+ngrok http 3000
 ```
-ndoe build/cli.js blog:export:hexo
-```
 
-Make sure `config.blog.hexoSourcePath` configured before command run.
+replace github payload to ngrok domain
 
-
-## Deployment
-
-1. Setup a github hexo repo: `hexo init avnpc.content`
-2. Run avnpc.js server with database
-3. Sync hexo repo post to database `node build/cli.js sync:github:db`
