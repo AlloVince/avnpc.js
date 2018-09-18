@@ -1,7 +1,7 @@
 module.exports = {
   blog: {
-    googleCustomSearchKey: process.env.GOOGLE_CUSTOM_SEARCH_KEY || '',
-    googleCustomSearchCx: process.env.GOOGLE_CUSTOM_SEARCH_CX || '005909242293933576388:h9kkzcmu7y8'
+    googleKey: process.env.BLOG_SEARCH_GOOGLEKEY || '',
+    googleCx: process.env.BLOG_SEARCH_GOOGLECX || ''
   },
   sequelize: {
     logging: false

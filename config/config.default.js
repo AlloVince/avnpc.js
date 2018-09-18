@@ -37,10 +37,10 @@ module.exports = {
     port: process.env.REDIS_PORT || 6379
   },
   sentry: {
-    enabled: false,
-    dsn_cli: '',
-    dsn_worker: '',
-    dsn_web: ''
+    enabled: process.env.SENTRY_ENABLED || false,
+    dsn_cli: process.env.SENTRY_DSN_CLI || '',
+    dsn_worker: process.env.SENTRY_DSN_WORKER || '',
+    dsn_web: process.env.SENTRY_DSN_WEB || ''
   },
   db: {
     migrationPaths: [
