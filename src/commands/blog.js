@@ -1,23 +1,27 @@
 import { Command, DI } from 'evaengine';
-import moment from 'moment-timezone';
 import BlogPost from '../models/blog_post';
 import HexoManager from '../models/hexo_manager';
 import entities from '../entities';
 
 
-export class BlogExportHexo extends Command {
+export class SyncDbToFile extends Command {
   static getName() {
-    return 'blog:export:hexo';
+    return 'sync:db:file';
   }
 
   static getDescription() {
-    return 'Export all posts to hexo source folder';
+    return 'Sync all database posts to a markdown files folder';
   }
 
   static getSpec() {
     return {
       id: {
-        required: false
+        required: false,
+        description: 'PostID'
+      },
+      root: {
+        required: false,
+        description: 'Markdown file root path'
       }
     };
   }
@@ -25,7 +29,8 @@ export class BlogExportHexo extends Command {
   async run() {
     const logger = DI.get('logger');
     const {
-      id
+      id,
+      root = DI.get('config').get('blog.hexo.postsPath')
     } = this.getOptions();
 
     const posts = id ? [{ id }] : await entities.get('BlogPosts').findAll({
@@ -38,7 +43,6 @@ export class BlogExportHexo extends Command {
     const blogModel = new BlogPost();
     let success = 0;
     let failed = 0;
-    const root = DI.get('config').get('blog.hexoSourcePath');
     for (const post of posts) {
       try {
         const path = await HexoManager
@@ -55,13 +59,82 @@ export class BlogExportHexo extends Command {
 }
 
 
-export class BlogSync extends Command {
+export class SyncGithubToDb extends Command {
   static getName() {
-    return 'blog:sync:hexo';
+    return 'sync:github:db';
   }
 
   static getDescription() {
-    return 'Sync remote hexo repo content to blog post';
+    return 'Sync all github markdown files to database';
+  }
+
+  static getSpec() {
+    return {
+      filename: {
+        required: false
+      },
+      path: {
+        required: false
+      }
+    };
+  }
+
+  async run() {
+    const logger = DI.get('logger');
+    const {
+      owner,
+      repo,
+      branch,
+      postsPath
+    } = DI.get('config').get('blog.github');
+    const {
+      path = postsPath,
+      filename = '*'
+    } = this.getOptions();
+
+    const uri = `github.com/${owner}/${repo}:${branch}:/${path}`;
+    const root = `github.com/${owner}/${repo}:${branch}:`;
+    logger.info('Start sync:github:db %s/%s', uri, filename);
+
+    let hexoFiles = [];
+    if (filename.startsWith('*')) {
+      hexoFiles = await HexoManager.getHexoFileListFromGithub(path, filename);
+    } else {
+      hexoFiles = [{
+        path: [path, filename].join('/')
+      }];
+    }
+    if (!hexoFiles || hexoFiles.length < 1) {
+      return logger.warn('No file found github for %s/%s', uri, filename);
+    }
+    logger.info('Found %s files to sync', hexoFiles.length);
+
+    let success = 0;
+    let failed = 0;
+    let count = 1;
+    for (const hexoFile of hexoFiles) {
+      try {
+        await HexoManager.importHexoFileFromGithub(hexoFile.path);
+        success += 1;
+        logger.info('[%s/%s] sync:github:db %s/%s success', count, hexoFiles.length, root, hexoFile.path);
+      } catch (e) {
+        logger.error('[%s/%s] sync:github:db %s/%s failed by ', count, hexoFiles.length, root, hexoFile.path, e);
+        failed += 1;
+      } finally {
+        count += 1;
+      }
+    }
+    return logger.info('Blog post sync:github:db finished, %d total, %d success, %d failed', hexoFiles.length, success, failed);
+  }
+}
+
+export class IteratorDb extends Command {
+  static getName() {
+    return 'iterator:db:sync:github';
+  }
+
+  static getDescription() {
+    return 'Iterator db to sync from github';
   }
 
   static getSpec() {
@@ -102,54 +175,5 @@ export class BlogSync extends Command {
       }
     }
     return logger.info('Blog posts sync finished, %d total, %d success, %d failed', posts.length, success, failed);
-  }
-}
-
-
-export class BlogImportHexo extends Command {
-  static getName() {
-    return 'blog:import:hexo';
-  }
-
-  static getDescription() {
-    return 'Import recent 1 year posts from a hexo github repo';
-  }
-
-  static getSpec() {
-    return {
-      slug: {
-        required: false
-      },
-      year: {
-        required: true
-      }
-    };
-  }
-
-  async run() {
-    const logger = DI.get('logger');
-    const {
-      year,
-      slug
-    } = this.getOptions();
-
-    const hexoFileNames = await HexoManager.getHexoFileListFromGithub(year || moment().format('YYYY'), slug);
-    if (!hexoFileNames || hexoFileNames.length < 1) {
-      return logger.warn('No file found in github for year %s', year);
-    }
-
-    let success = 0;
-    let failed = 0;
-    for (const hexoFileName of hexoFileNames) {
-      try {
-        await HexoManager.importHexoFileFromGithub(hexoFileName);
-        success += 1;
-        logger.info('Import blog post %s success', hexoFileName.name);
-      } catch (e) {
-        logger.error('Import blog post %s failed by ', hexoFileName.name, e);
-        failed += 1;
-      }
-    }
-    return logger.info('Blog posts import finished, %d total, %d success, %d failed', hexoFileNames.length, success, failed);
   }
 }

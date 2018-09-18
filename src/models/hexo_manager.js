@@ -115,11 +115,11 @@ ${post.text.content}
     return (new BlogPost()).upsert(newPost, 0);
   }
 
-  static async importHexoFileFromGithub(hexoFileName) {
-    const { name, path } = hexoFileName;
-    assert(name && path, 'Import hexo file require name and path');
-    const slug = name.split('.').slice(0, -1).join('.');
-    const hexoFile = await HexoManager.getHexoFileFromGithub(`${path}/${name}`);
+  static async importHexoFileFromGithub(path) {
+    assert(path, 'Import hexo file require path');
+    const filename = path.split('/').pop();
+    const slug = filename.split('.').slice(0, -1).join('.');
+    const hexoFile = await HexoManager.getHexoFileFromGithub(path);
     const blogModel = new BlogPost();
 
     let oldPost = null;
@@ -136,36 +136,36 @@ ${post.text.content}
       return false;
     }
 
-    const newPost = HexoManager.hexoFileToPost({ rawText: hexoFile, filename: name });
+    const newPost = HexoManager.hexoFileToPost({ rawText: hexoFile.rawText, filename });
     return (new BlogPost()).upsert(newPost, 0);
   }
 
   /**
-   * @param year
-   * @returns {Promise<Array{{name:string, type:string, mode:integer, path:string}}>}
+   * @param path
+   * @param filename
+   * @returns {Promise<*>}
    */
-  static async getHexoFileListFromGithub(year, slug) {
-    const path = `source/_posts/${year}`;
-    const files = await DI.get('github').getFileTrees(path);
+  static async getHexoFileListFromGithub(path, filename) {
+    const { owner, repo, branch } = DI.get('config').get('blog.github');
+    const { tree: files } = await DI.get('github').getFileTreesRecursive(owner, repo, branch);
     if (files.length < 1) {
       return files;
     }
+    const glob = filename.startsWith('*');
     return files
-      .map(file => Object.assign(file, { path }))
-      .filter(file => (slug ? file.name === `${slug}.md` : true));
+      .filter(file => file.type === 'blob')
+      .filter(file => file.path.startsWith(path))
+      .filter(file => (glob ? true : file.path === `${path}/${filename}`));
+    // .map(file => Object.assign(file, { path }))
+    // .filter(file => (filename.startsWith('*') ? true : file.name === `${filename}`));
   }
 
   static async getHexoFileFromGithub(filepath) {
-    const config = DI.get('config');
-    const {
-      repository:
-        {
-          object: { commitUrl, text }
-        }
-    } = await DI.get('github').queryGraphQL(`
+    const { owner, repo, branch } = DI.get('config').get('blog.github');
+    const res = await DI.get('github').queryGraphQL(`
     {
-      repository(owner: "${config.get('blog.githubOwner')}", name: "${config.get('blog.githubRepo')}") {
-        object(expression: "${config.get('blog.githubBranch')}:${filepath}") {
+      repository(owner: "${owner}", name: "${repo}") {
+        object(expression: "${branch}:${filepath}") {
           commitUrl
           ... on Blob {
             text
@@ -174,6 +174,12 @@ ${post.text.content}
       }
     }
     `);
+    const {
+      repository:
+        {
+          object: { commitUrl, text }
+        }
+    } = res;
     return {
       contentRemoteHash: commitUrl.split('/').pop(),
       //TODO updatedAt:

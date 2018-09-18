@@ -1,12 +1,19 @@
 module.exports = {
   blog: {
-    hexoSourcePath: process.env.HEXO_SOURCE_PATH || '/opt/htdocs/avnpc.content/source/_posts',
-    githubOwner: process.env.GITHUB_OWNER || 'AlloVince',
-    githubRepo: process.env.GITHUB_REPO || 'avnpc.content',
-    githubBranch: process.env.GITHUB_BRANCH || 'master',
-    githubPersonalAccessToken: process.env.GITHUB_ACCESS_TOKEN || '',
-    googleCustomSearchKey: process.env.GOOGLE_CUSTOM_SEARCH_KEY || '',
-    googleCustomSearchCx: process.env.GOOGLE_CUSTOM_SEARCH_CX || ''
+    hexo: {
+      postsPath: process.env.BLOG_HEXO_POSTSPATH || '/opt/htdocs/avnpc.content/source/_posts'
+    },
+    github: {
+      owner: process.env.BLOG_GITHUB_OWNER || 'AlloVince',
+      repo: process.env.BLOG_GITHUB_REPO || 'avnpc.content',
+      branch: process.env.BLOG_GITHUB_BRANCH || 'master',
+      token: process.env.BLOG_GITHUB_TOKEN || '',
+      postsPath: process.env.BLOG_GITHUB_POSTSPATH || 'source/_posts'
+    },
+    search: {
+      googleKey: process.env.BLOG_SEARCH_GOOGLEKEY || '',
+      googleCx: process.env.BLOG_SEARCH_GOOGLECX || ''
+    }
   },
   evernote: {
     consumerKey: process.env.EVERNOTE_CONSUMERKEY || '',
@@ -27,6 +34,12 @@ module.exports = {
   redis: {
     host: process.env.REDIS_HOST || '127.0.0.1',
     port: process.env.REDIS_PORT || 6379
+  },
+  sentry: {
+    enabled: false,
+    dsn_cli: '',
+    dsn_worker: '',
+    dsn_web: ''
   },
   db: {
     migrationPaths: [

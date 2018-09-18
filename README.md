@@ -46,3 +46,10 @@ ndoe build/cli.js blog:export:hexo
 ```
 
 Make sure `config.blog.hexoSourcePath` configured before command run.
+
+
+## Deployment
+
+1. Setup a github hexo repo: `hexo init avnpc.content`
+2. Run avnpc.js server with database
+3. Sync hexo repo post to database `node build/cli.js sync:github:db`
