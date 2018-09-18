@@ -27,27 +27,26 @@
       "!test/bootstrap.js",
       "!config/**/*.js"
     ],
-    "source": [
+    "sources": [
       "src/**/*.js"
     ],
     "failFast": true,
     "tap": false,
     "require": [
-      "babel-core/register",
-      "babel-polyfill"
-    ],
-    "babel": "inherit"
+      "@babel/register",
+      "@babel/polyfill"
+    ]
   },
   "nyc": {
     "require": [
-      "babel-core/register"
+      "@babel/register"
     ],
     "include": [
       "src/**/*.js"
     ]
   },
   "engines": {
-    "node": ">=8.9.1"
+    "node": ">=10"
   },
   "pre-commit": [
     "lint"
@@ -86,7 +85,7 @@
     "@babel/preset-env": "^7.0.0-rc.3",
     "@babel/register": "^7.0.0-rc.3",
     "@types/glob": "^5.0.35",
-    "ava": "^0.25.0",
+    "ava": "^1.0.0-beta.8",
     "babel-eslint": "^9.0.0",
     "babel-plugin-graphql-tag": "^1.6.0",
     "eslint": "^5.6.0",
