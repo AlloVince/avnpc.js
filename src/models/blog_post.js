@@ -1,4 +1,4 @@
-import { exceptions, utils } from 'evaengine';
+import { DI, exceptions, utils } from 'evaengine';
 import assert from 'assert';
 import entities from '../entities';
 
@@ -97,7 +97,9 @@ export default class BlogPost {
       await transaction.rollback();
       throw new exceptions.DatabaseIOException(e);
     }
-    return this.get(post.id);
+    const newPost = await this.get(post.id);
+    DI.get('event_manager').emit('blog_post:create:after', newPost);
+    return newPost;
   }
 
   async update(id, input, userId) {
@@ -138,7 +140,9 @@ export default class BlogPost {
       await transaction.rollback();
       throw new exceptions.DatabaseIOException(e);
     }
-    return entity.findById(id, { useMaster: true });
+    const newPost = await entity.findById(id, { useMaster: true });
+    DI.get('event_manager').emit('blog_post:update:after', newPost);
+    return newPost;
   }
 
   async remove(id) {

@@ -28,6 +28,59 @@ class GithubAPIClient {
     this.config = config;
   }
 
+  async getIssue(label) {
+    const { owner, repo } = this.config.get('blog.github');
+    const { repository: { issues: { nodes: [issue] } } } = await this.queryGraphQL(`
+    {
+      repository(owner: "${owner}", name: "${repo}") {
+        issues(labels: "${label}", first: 1) {
+          nodes {
+            ... on Issue {
+              id
+              number
+              title
+              state
+              body
+              createdAt
+            }
+          }
+        }
+      }
+    }
+    `);
+    return issue;
+  }
+
+  async createIssue(inputIssue) {
+    const { owner, repo } = this.config.get('blog.github');
+    const issue = await DI.get('http_client').request({
+      method: 'POST',
+      url: format('https://api.github.com/repos/%s/%s/issues', owner, repo),
+      headers: {
+        'User-Agent': 'EvaEngine.js',
+        Authorization: `token ${this.config.get('blog.github.token')}`
+      },
+      json: true,
+      body: inputIssue
+    });
+    return issue;
+  }
+
+  async updateIssue(issueNumber, inputIssue) {
+    const { owner, repo } = this.config.get('blog.github');
+    const issue = await DI.get('http_client').request({
+      method: 'PATCH',
+      url: format('https://api.github.com/repos/%s/%s/issues/%s', owner, repo, issueNumber),
+      headers: {
+        'User-Agent': 'EvaEngine.js',
+        Authorization: `token ${this.config.get('blog.github.token')}`
+      },
+      json: true,
+      body: inputIssue
+    });
+    return issue;
+  }
+
   /**
    * @param path
    * @returns {Promise<Array{{name:string, type:string, mode:integer}}>}

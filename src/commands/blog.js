@@ -1,5 +1,6 @@
 import { Command, DI } from 'evaengine';
 import BlogPost from '../models/blog_post';
+import BlogComment from '../models/blog_comment';
 import HexoManager from '../models/hexo_manager';
 import entities from '../entities';
 
@@ -175,5 +176,61 @@ export class IteratorDb extends Command {
       }
     }
     return logger.info('Blog posts sync finished, %d total, %d success, %d failed', posts.length, success, failed);
+  }
+}
+
+
+export class UpsertIssue extends Command {
+  static getName() {
+    return 'upsert:issue';
+  }
+
+  static getDescription() {
+    return 'Create comment issue for post';
+  }
+
+  static getSpec() {
+    return {
+      id: {
+        required: false,
+        description: 'PostID'
+      }
+    };
+  }
+
+  async run() {
+    const logger = DI.get('logger');
+    const {
+      id
+    } = this.getOptions();
+    const posts = id ? await entities.get('BlogPosts').findAll({
+      where: {
+        id,
+        status: 'published',
+        commentStatus: 'open',
+        contentStorage: 'remote'
+      },
+      order: 'id DESC'
+    }) : await entities.get('BlogPosts').findAll({
+      where: {
+        status: 'published',
+        commentStatus: 'open',
+        contentStorage: 'remote'
+      },
+      order: 'id DESC'
+    });
+    let success = 0;
+    let failed = 0;
+    for (const post of posts) {
+      try {
+        await BlogComment.upsert(post.id);
+        logger.info('Upsert issue for %s success', post.id);
+        success += 1;
+      } catch (e) {
+        logger.error('Upsert issue %s failed by ', post.id, e);
+        failed += 1;
+      }
+    }
+    return logger.info('Blog posts upsert issue finished, %d total, %d success, %d failed', posts.length, success, failed);
   }
 }
