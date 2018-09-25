@@ -93,6 +93,12 @@ module.exports = {
       uid: 1
     }
   },
+  unsplash: {
+    applicationId: '',
+    secret: '',
+    callbackUrl: '',
+    bearerToken: ''
+  },
   swagger: {
     info: {
       title: 'avnpc.com API',

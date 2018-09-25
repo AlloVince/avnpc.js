@@ -1,1 +1,2 @@
-export { GithubAPIClientProvider } from './github'; //eslint-disable-line
+export { GithubAPIClientProvider } from './github';
+export { UnsplashClientProvider } from './unsplash';
