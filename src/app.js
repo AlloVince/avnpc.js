@@ -80,3 +80,14 @@ global.p = (...args) => logger.dump(...args);
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('unhandledRejection:', reason, promise);
 });
+
+
+for (const signal of ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGTERM', 'SIGABRT', 'SIGTSTP']) {
+  process.on(signal, () => {
+    logger.info('Received signal %s', signal);
+    setInterval(() => {
+      logger.info('Process exit by signal %s', signal);
+      process.exit(0);
+    }, 10000);
+  });
+}
